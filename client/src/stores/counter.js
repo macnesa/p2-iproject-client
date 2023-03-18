@@ -191,7 +191,10 @@ export const useDataStore = defineStore('data', {
      async getCurrentPlaying() {  
       let url = "https://api.spotify.com/v1/me/player/currently-playing"; 
       try {
-        const { data } = await
+        
+        keywords.forEach(each => {
+          
+          const { data } = await
           axios({
             url,
             method: "get",
@@ -202,6 +205,10 @@ export const useDataStore = defineStore('data', {
         
         this.currentlyPlaying = data
         console.log(data, "yamim tovim");
+        
+        })
+        
+         
         
       } catch (error) { 
         console.log(error);
@@ -230,6 +237,11 @@ export const useDataStore = defineStore('data', {
       }
     },
 
+    
+    
+    
+    
+    
     async getTopGlobal() {
       try {
         const req = await
@@ -334,3 +346,17 @@ export const useDataStore = defineStore('data', {
 
   }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
