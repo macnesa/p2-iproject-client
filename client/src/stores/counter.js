@@ -7,14 +7,17 @@ import { RouterLink, RouterView } from "vue-router";
 export const useDataStore = defineStore('data', {
   state: () => ({
     name: '',
-    // baseUrl: 'http://localhost:3000',
-    baseUrl: 'https://macspotify-production.up.railway.app',
+    baseUrl: 'http://localhost:3000',
+    // baseUrl: 'https://macspotify-production.up.railway.app',
     clientId: '',
     paymentToken: '',
     spotifyProfile: {},
     spotifyTopTracks: {},
     recentlyPlayed: {},
+    currentlyPlaying: {},
     topArtists: {},
+    topTracksByArtist: {},
+    tracksByTopOneSong: {},
     searchList: null,
     topGlobal: {}
   }),
@@ -65,6 +68,9 @@ export const useDataStore = defineStore('data', {
         console.log(error);
       }
     },
+    
+    
+    
     async getTopTracks() {
       try {
         const req = await
@@ -76,11 +82,39 @@ export const useDataStore = defineStore('data', {
             }
           })
         this.spotifyTopTracks = req.data
+        
+        let trackId = req.data.items[0].id
+        let artistId = req.data.items[0].artists[0].id 
+        // console.log(artistId, trackId, "lecha dodi likrat kallah" );
+        
+        await this.getTracksByTopOneTrack(trackId, artistId) 
+        
         console.log(req.data);
       } catch (error) {
         console.log(error);
       }
     },
+    
+    async getTracksByTopOneTrack(a, b) {
+      try {
+        const req = await
+          axios({
+            url: `${this.baseUrl}/tracksByTopOneTrack?trackId=${a}&artistId=${b}`,
+            method: 'get',
+            headers: {
+              access_token: localStorage.getItem('token')
+            }
+          })
+        this.tracksByTopOneSong = req.data 
+        console.log(req.data, " oyuoyvey");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    
+     
+    
+    
     async getTopArtists() {
       try {
         const req = await
@@ -92,7 +126,28 @@ export const useDataStore = defineStore('data', {
             }
           })
         this.topArtists = req.data
+        await this.getTopTracksByArtist(req.data.items[0].id)
         console.log(req.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    
+    async getTopTracksByArtist(artistId) {
+      try {
+        const req = await
+          axios({
+            url: `${this.baseUrl}/topTracksByArtist/?artistId=${artistId}`,
+            method: 'get',
+            headers: {
+              access_token: localStorage.getItem('token')
+            }
+          })
+          
+          
+          
+        this.topTracksByArtist = req.data
+        console.log(req.data, "LASHEM SHAAAMAYIM");
       } catch (error) {
         console.log(error);
       }
@@ -114,6 +169,48 @@ export const useDataStore = defineStore('data', {
         console.log(error);
       }
     },
+    
+    
+    // async getCurrentPlaying() {
+    //   try {
+    //     const req = await
+    //       axios({
+    //         url: `${this.baseUrl}/nowPlaying`,
+    //         method: 'get',
+    //         headers: {
+    //           access_token: localStorage.getItem('token')
+    //         }
+    //       })
+    //     this.currentlyPlaying = req.data
+    //     console.log(req.data, "yamim tovim");
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }, 
+    
+     async getCurrentPlaying() {  
+      let url = "https://api.spotify.com/v1/me/player/currently-playing"; 
+      try {
+        const { data } = await
+          axios({
+            url,
+            method: "get",
+            headers: {
+              Authorization: `Bearer ` + localStorage.getItem('token'),
+            },
+        }); 
+        
+        this.currentlyPlaying = data
+        console.log(data, "yamim tovim");
+        
+      } catch (error) { 
+        console.log(error);
+
+      }
+    },
+    
+    
+    
 
     async searchSongs(string) {
       const encodedString = encodeURIComponent(string);

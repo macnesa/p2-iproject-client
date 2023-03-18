@@ -1,0 +1,359 @@
+
+  <p class="mt-5 text-[2rem] ">My Top Song</p>
+  <div v-if="spotifyTopTracks.items?.length"
+    class="mt-5 w-full h-[30rem] shadow-xl  rounded-3xl border border-black overflow-hidden grid">
+
+  <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+    <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+  </div>
+
+  <div style="filter:brightness(1); box-shadow: inset 93px 33px 201px 5px black;"
+    class="row-start-1 col-start-1 grid grid-flow-col grid-cols-[1fr_max-content] ">
+    <div class=" pl-16 text-white  grid items-center ">
+      <p class="text-[10rem] self-end ">{{ spotifyTopTracks.items[0].name }}</p>
+      <div class="self-start">
+        <p class="font-bold">By {{ spotifyTopTracks.items[0].artists[0].name }}</p>
+        <p class="">{{ msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
+          <button @click="playSong(spotifyTopTracks.items[0].id)" type="button"
+            class=" mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Play</button>
+      </div>
+    </div>
+    <div class=" my-8 mr-16 ">
+      <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" h-[100%] ">
+    </div>
+  </div>
+
+  </div>
+  <div v-else>
+    <p>No data is currently available</p>
+  </div>
+
+
+<p class="mt-5  text-[2rem]">My Top Artist</p>
+<div v-if="topArtists.items?.length" class="mt-5 w-full h-[30rem] shadow-xl  overflow-hidden grid">
+
+  <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+      <img :src="topArtists.items[0].images[1].url" class=" w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+    </div>
+
+  <div style="filter:brightness(1); "
+    class=" p-5 m-12 rounded-[50px] bg-white row-start-1 col-start-1 grid grid-flow-col grid-cols-[max-content_1fr] ">
+
+    <img :src="topArtists.items[0].images[1].url" class=" ml-16 rounded-[250px]  h-[100%] ">
+    <div class=" pl-16 text-gray-800  grid items-center ">
+      <p class="text-[6rem] self-end ">{{ topArtists.items[0].name }}</p>
+      <div class="self-start">
+        <p class="font-bold"> {{ topArtists.items[0].genres.join(' - ') }}</p>
+      </div>
+      </div>
+
+    </div>
+
+</div>
+<div v-else>
+  <p>No data is currently available</p>
+</div>
+
+
+
+
+
+<div v-if="topArtists.items?.length" class=" box mt-10">
+  <ArtistCard v-for="each, index in topArtists.items" v-bind:artist="each" :key="index" />
+</div>
+<div v-else>
+  <p>No data is currently available</p>
+</div>
+
+
+<!-- <header v-if="spotifyTopTracks.items?.length" v-for="each in spotifyTopTracks.items"
+    class="w-full h-20 shadow-xl border border-black  rounded-3xl grid grid-flow-col justify-evenly items-center ">
+    <div class="w-12 h-12 rounded-sm border border-black overflow-hidden ">
+      <img :src="each.album.images[1].url" width="100" height="100" alt="">
+    </div>
+    <div class="">
+      <p> <b>{{ each.name }} </b> </p>
+      <p>{{ each.artists[0].name }} </p>
+      <p>{{ each.album.name }} </p>
+          </div>
+    <div class="">
+      <p>{{ msToTimeFormat(each.duration_ms) }}</p>
+      <button @click="playSong(each.id)">Play</button>
+      <button v-if="(spotifyProfile.isPaid)" @click="download(each.id)">Download</button> 
+    </div>
+
+        </header>
+        <div v-else>
+          <p>No data is currently available</p>
+        </div> -->
+
+
+  <div class="mt-10  text-[2rem]">
+    <p>Recently played</p>
+  </div>
+  <MusicCard v-if="recentlyPlayed.items?.length" :data="recentlyPlayed.items[0].track" />
+  <div v-else>
+    <p>No data is currently available</p>
+  </div>
+
+
+  <MusicTable />
+
+  <header v-if="iframeSrc"
+    class=" h-20 shadow-xl  w-[] rounded-3xl grid grid-flow-col justify-evenly items-center fixed bottom-5 ">
+    <iframe style="border-radius:12px" :src="iframeSrc" class="w-[90vw]" frameborder="0" allowtransparency="true"
+      allow="encrypted-media" autoplay></iframe>
+    <!-- <iframe id="spotify-iframe" :src="iframeSrc" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
+    <!-- <button onclick="">Play</button> -->
+  </header>
+
+  <!-- <div>
+          <select v-model="selectedLanguage" id="language">
+            <option v-for="language in languages" :value="language.code">{{ language.name }}</option>
+          </select>
+          <button class="record" @click="toggleRecording">
+            <p>Start Listening</p>
+          </button>
+          <div class="result">
+            <p v-for="text in texts">{{ text }}</p>
+          </div>
+          <button class="download" :disabled="texts.length === 0" @click="download">Download</button>
+          <button class="clear" @click="clear">Clear</button>
+        </div> -->
+  <p>my code: {{ token }}</p>
+  <!-- <p>my code: {{ token }}</p>
+  
+        <h1>Hi, {{ spotifyProfile.spotify.display_name }}</h1>
+        <img :src="spotifyProfile.spotify.images[0].url" width="100" height="100" alt="">
+        <h1>status: {{ (spotifyProfile.isPaid) ? "premium" : "unpaid"  }}</h1>
+        <button @click="snap()" id="pay-button">Pay!</button>
+        <button @click="download()" >downlaod</button>
+        <br>  -->
+        
+  <!-- <input v-model="search"   id="search_spotify" type="text" name="" > <button @click="searchSongs(search)" >Search a song </button> -->
+
+  <!-- <ul v-if="searchList" > 
+          <li v-for="each in searchList.tracks.items" > 
+            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }} -  {{ each.artists[0].name }} -  {{ each.album.name }} -  {{ msToTimeFormat(each.duration_ms) }}
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
+          </li> 
+        </ul> -->
+
+  <!-- <ul>
+          <li>
+            <img :src="topGlobal.images[0].url" width="50" height="50" alt="">  - {{ topGlobal.name }}
+          </li>
+          <li v-for="each in topGlobal.tracks.items" >
+            <img :src="each.track.album.images[1].url" alt="" width="50" height="50" >  
+            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ each.track.album.name }} - {{ msToTimeFormat(each.track.duration_ms) }}
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
+      
+          </li>
+        </ul> -->
+
+
+  <!-- <ul> 
+          <li>you favourite artists</li>
+          <li v-for="each in topArtists.items" > 
+            <img :src="each.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }} followers: {{ each.followers.total  }} popularity: {{ each.popularity }} {{ each.genres.join(', ') }}
+          </li>
+    
+        </ul> -->
+
+  <!-- <ul> recentlyPlayed.items[0].track.name
+          <li>your reccently played</li>
+          <li v-for="each in recentlyPlayed.items" > 
+            <img :src="each.track.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ msToTimeFormat(each.track.duration_ms)  }}  
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.track.id }}</button>      
+          </li>
+        </ul> -->
+
+  <!-- <ul> 
+          <li>your top tracks</li> 
+          <li v-for="each in spotifyTopTracks.items" > 
+            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }}  - {{ each.artists[0].name }} - {{ msToTimeFormat(each.duration_ms)  }} - 
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.id)" >{{ each.id }}</button> - 
+            <iframe style="border-radius:12px" :src="getEmbedLink(each.id)" width="500px" height="50px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      
+          </li>
+        </ul> -->
+  <!-- 
+  
+        <div>
+          <div id="embed-iframe"></div>
+          <button @click="playEpisode">Play Episode</button>
+        </div>  -->
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    <p class="mt-5 mb-5 text-[2rem] font-bold text-white ">My Top Song</p>
+    <!-- bg-white dark:bg-gray-900  max-w-screen-xl  -->
+    <section v-if="spotifyTopTracks.items?.length" class="grid border-4 border-blue-900 ">
+
+      <!--  h-[100%] w-[100%] -->
+      <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1 ">
+        <img :src="spotifyTopTracks.items[0].album.images[0].url"
+          class="h-[100%] w-[100%] blur-sm scale-125 brightness-[0.2]  ">
+      </div>
+
+
+      <div style="filter:brightness(1);"
+        class="grid px-8 py-8 mx-auto my-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 row-start-1 col-start-1 border border-blue-600 h-[max-content]  ">
+        <div class=" lg:mt-0 lg:col-span-5 lg:flex border border-white">
+          <img :src="spotifyTopTracks.items[0].album.images[0].url" class=" ">
+        </div>
+        <div class="m-auto place-self-center lg:col-span-7 border border-white ">
+          <h1
+            class=" mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-[8rem] dark:text-white">
+            {{ spotifyTopTracks.items[0].name }}</h1>
+          <p class="max-w-2xl   font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">by {{
+            spotifyTopTracks.items[0].artists[0].name }}</p>
+          <p class="max-w-2xl   font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">on {{
+            spotifyTopTracks.items[0].album.name }}</p>
+          <p class="max-w-2xl mb-4 font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">{{
+            msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
+          <a href="#"
+            class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
+            Play
+          </a>
+        </div>
+      </div>
+
+
+    </section>
+    
+    
+     
+    
+    
+    
+    <div v-else>
+      <p>No data is currently available</p>
+    </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+    <!-- <div v-if="spotifyTopTracks.items?.length"
+          class="mt-5 w-full h-[30rem] shadow-xl   border border-black overflow-hidden grid">
+
+          <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+            <img :src="spotifyTopTracks.items[0].album.images[0].url" class=" w-[100%] blur-lg scale-125 brightness-[0.5]  ">
+          </div>
+
+          <div style="filter:brightness(1); box-shadow: inset 93px 33px 201px 5px black;"
+            class="row-start-1 col-start-1 grid grid-flow-col grid-cols-[1fr_max-content] ">
+            <div class=" pl-16 text-white  grid items-center ">
+              <p class="text-[10rem] self-end ">{{ spotifyTopTracks.items[0].name }}</p>
+              <div class="self-start">
+                <p class="font-bold">By {{ spotifyTopTracks.items[0].artists[0].name }}</p>
+                <p class="">{{ msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
+                <button @click="playSong(spotifyTopTracks.items[0].id)" type="button"
+                  class=" mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Play</button>
+              </div>
+            </div>
+            <div class=" my-8 mr-16 ">
+              <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" h-[100%] ">
+            </div>
+          </div>
+
+        </div>  -->
+
+    <!-- <div v-else>
+          <p>No data is currently available</p>
+        </div> -->
+
+    <!-- <div class="w-full h-[30vh] border border-white " >
+      
+      </div> -->
+    <div class="mt-10"></div>
+    
+    
+    
+     
+
+    
+ 
+ 
+    <p class="mt-5 mb-5  text-[2rem] text-white">My Top Artist</p>
+    <div v-if="topArtists.items?.length"
+      class=" h-auto max-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid">
+
+      <div style="z-index:0"
+        class=" h-[100%] w-[100%] overflow-hidden border-3 border-purple-500 row-start-1 col-start-1">
+        <img :src="topArtists.items[0].images[1].url" class=" h-[100%]  w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+      </div>
+
+      <!-- rounded-[50px] grid-flow-col grid-cols-[max-content_1fr]  -->
+      <div style="filter:brightness(1); "
+        class=" p-5 m-12  border border-red-400 bg-white row-start-1 justify-center col-start-1 grid grid-rows-[max-content_1fr] ">
+        <!--  -->
+        <img :src="topArtists.items[0].images[1].url" class="  rounded-[250px]  h-[100%] border border-black ">
+
+        <!--  pl-16 -->
+        <div class=" text-gray-800 text-center  grid items-cente border border-black ">
+
+          <!-- text-[6rem] -->
+          <p class=" self-end ">{{ topArtists.items[0].name }}</p>
+          <div class="self-start">
+            <p class="font-bold"> {{ topArtists.items[0].genres.join(' - ') }}</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <div v-else>
+      <p>No data is currently available</p>
+    </div>
+
+
+
+//get tracks by top 1 artist
+<div v-if="topTracksByArtist.tracks?.length" v-for="each in topTracksByArtist.tracks"> 
+      <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
+      <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
+      <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
+    </div>
+    
+    //get tracks by top 1 song
+    <div v-if="tracksByTopOneSong.tracks?.length" v-for="each in tracksByTopOneSong.tracks"> 
+      <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
+      <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
+      <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
