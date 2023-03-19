@@ -19,7 +19,8 @@ export const useDataStore = defineStore('data', {
     topTracksByArtist: {},
     tracksByTopOneSong: {},
     searchList: null,
-    topGlobal: {}
+    topGlobal: {},
+    topLocal: {}
   }),
   getters: {
 
@@ -191,10 +192,7 @@ export const useDataStore = defineStore('data', {
      async getCurrentPlaying() {  
       let url = "https://api.spotify.com/v1/me/player/currently-playing"; 
       try {
-        
-        keywords.forEach(each => {
-          
-          const { data } = await
+        const { data } = await
           axios({
             url,
             method: "get",
@@ -206,10 +204,6 @@ export const useDataStore = defineStore('data', {
         this.currentlyPlaying = data
         console.log(data, "yamim tovim");
         
-        })
-        
-         
-        
       } catch (error) { 
         console.log(error);
 
@@ -219,29 +213,48 @@ export const useDataStore = defineStore('data', {
     
     
 
-    async searchSongs(string) {
-      const encodedString = encodeURIComponent(string);
+    // async searchSongs(string) {
+    //   const encodedString = encodeURIComponent(string);
+    //   try {
+    //     const req = await
+    //       axios({
+    //         url: `${this.baseUrl}/findSongs?q=${encodedString}`,
+    //         method: 'get',
+    //         headers: {
+    //           access_token: localStorage.getItem('token')
+    //         }
+    //       })
+    //     this.searchList = req.data.tracks.items
+    //     console.log(req.data.tracks.items);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
+    
+    async searchSongs(string) { 
+       
       try {
         const req = await
           axios({
-            url: `${this.baseUrl}/findSongs?q=${encodedString}`,
-            method: 'get',
+            url: `${this.baseUrl}/findSongsByAi`,
+            method: 'post',
             headers: {
-              access_token: localStorage.getItem('token')
+              access_token: localStorage.getItem('token'),  
+            },
+            data: {
+              keyword: "strin"
             }
           })
         this.searchList = req.data
-        console.log(req.data);
+        console.log(req.data, "aha aha aha aha aha");
       } catch (error) {
         console.log(error);
       }
+      
+       
     },
-
     
-    
-    
-    
-    
+     
     async getTopGlobal() {
       try {
         const req = await
@@ -258,7 +271,26 @@ export const useDataStore = defineStore('data', {
         console.log(error);
       }
     },
-
+    
+    
+    async getTopLocal() {
+      try {
+        const req = await
+          axios({
+            url: `${this.baseUrl}/TopLocal`,
+            method: 'get',
+            headers: {
+              access_token: localStorage.getItem('token')
+            }
+          })
+        this.topLocal = req.data
+        console.log(req.data, "TOP LOCAL");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    
+    
     async getPaymentToken() {
       try {
         const req = await

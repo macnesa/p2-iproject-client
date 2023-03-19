@@ -140,17 +140,6 @@
           </li> 
         </ul> -->
 
-  <!-- <ul>
-          <li>
-            <img :src="topGlobal.images[0].url" width="50" height="50" alt="">  - {{ topGlobal.name }}
-          </li>
-          <li v-for="each in topGlobal.tracks.items" >
-            <img :src="each.track.album.images[1].url" alt="" width="50" height="50" >  
-            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ each.track.album.name }} - {{ msToTimeFormat(each.track.duration_ms) }}
-            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
-      
-          </li>
-        </ul> -->
 
 
   <!-- <ul> 
@@ -196,50 +185,7 @@
         
         
     
-    <p class="mt-5 mb-5 text-[2rem] font-bold text-white ">My Top Song</p>
-    <!-- bg-white dark:bg-gray-900  max-w-screen-xl  -->
-    <section v-if="spotifyTopTracks.items?.length" class="grid border-4 border-blue-900 ">
-
-      <!--  h-[100%] w-[100%] -->
-      <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1 ">
-        <img :src="spotifyTopTracks.items[0].album.images[0].url"
-          class="h-[100%] w-[100%] blur-sm scale-125 brightness-[0.2]  ">
-      </div>
-
-
-      <div style="filter:brightness(1);"
-        class="grid px-8 py-8 mx-auto my-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 row-start-1 col-start-1 border border-blue-600 h-[max-content]  ">
-        <div class=" lg:mt-0 lg:col-span-5 lg:flex border border-white">
-          <img :src="spotifyTopTracks.items[0].album.images[0].url" class=" ">
-        </div>
-        <div class="m-auto place-self-center lg:col-span-7 border border-white ">
-          <h1
-            class=" mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-[8rem] dark:text-white">
-            {{ spotifyTopTracks.items[0].name }}</h1>
-          <p class="max-w-2xl   font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">by {{
-            spotifyTopTracks.items[0].artists[0].name }}</p>
-          <p class="max-w-2xl   font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">on {{
-            spotifyTopTracks.items[0].album.name }}</p>
-          <p class="max-w-2xl mb-4 font-light text-gray-500   md:text-lg lg:text-xl dark:text-white">{{
-            msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
-          <a href="#"
-            class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-            Play
-          </a>
-        </div>
-      </div>
-
-
-    </section>
     
-    
-     
-    
-    
-    
-    <div v-else>
-      <p>No data is currently available</p>
-    </div>
         
         
         
@@ -298,62 +244,256 @@
     
  
  
-    <p class="mt-5 mb-5  text-[2rem] text-white">My Top Artist</p>
-    <div v-if="topArtists.items?.length"
-      class=" h-auto max-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid">
+    
 
-      <div style="z-index:0"
-        class=" h-[100%] w-[100%] overflow-hidden border-3 border-purple-500 row-start-1 col-start-1">
-        <img :src="topArtists.items[0].images[1].url" class=" h-[100%]  w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+//get tracks by top 1 song
+      <div v-if="tracksByTopOneSong.tracks?.length" v-for="each in tracksByTopOneSong.tracks"> 
+        <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
+        <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
+        <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
+      </div>
+    
+    
+    
+    
+      <div class="mt-10  text-[2rem]">
+        <p>Currently playing</p>
       </div>
 
-      <!-- rounded-[50px] grid-flow-col grid-cols-[max-content_1fr]  -->
-      <div style="filter:brightness(1); "
-        class=" p-5 m-12  border border-red-400 bg-white row-start-1 justify-center col-start-1 grid grid-rows-[max-content_1fr] ">
-        <!--  -->
-        <img :src="topArtists.items[0].images[1].url" class="  rounded-[250px]  h-[100%] border border-black ">
+      <div v-if="Object.keys(currentlyPlaying).length">
+        <img :src="currentlyPlaying.item.album.images[0].url" width="50" height="50" alt="">
+        <p class="text-white"> {{ currentlyPlaying.item.name }} ({{ currentlyPlaying.item.id }}) - On {{
+          currentlyPlaying.item.album.name }} </p>
 
-        <!--  pl-16 -->
-        <div class=" text-gray-800 text-center  grid items-cente border border-black ">
-
-          <!-- text-[6rem] -->
-          <p class=" self-end ">{{ topArtists.items[0].name }}</p>
-          <div class="self-start">
-            <p class="font-bold"> {{ topArtists.items[0].genres.join(' - ') }}</p>
-          </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div class="bg-blue-600 h-2.5 rounded-full" :style="{ width: `${hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms)}%` }" ></div>
         </div>
 
+        <p class="text-white"> {{ msToTimeFormat(currentlyPlaying.progress_ms) }} * {{
+          msToTimeFormat(currentlyPlaying.item.duration_ms) }} </p>
+
+        <p  class="text-white"> {{ hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms) }} </p>
+
+        <p v-for="each in currentlyPlaying.item.artists" class="text-white"> {{ each.name }} </p>
+        <!-- <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>   -->
+      </div>
+      <div v-else>
+        <p>No data is currently available</p>
       </div>
 
-    </div>
-    <div v-else>
-      <p>No data is currently available</p>
-    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    TOP LOCAL 
+  <ul>
+          <li class="text-white">
+            <img :src="topLocal.images[0].url" width="50" height="50" alt="">  - {{ topLocal.name }}
+          </li>
+          <li class="text-white" v-for="each in topLocal.tracks.items" >
+            <img :src="each.track.album.images[1].url" alt="" width="50" height="50" >  
+            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ each.track.album.name }} - {{ msToTimeFormat(each.track.duration_ms) }}
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
+      
+          </li>
+        </ul>
+        
+        
+        
+    // music player
+    <audio controls id="audio-preview">
+      <source
+        src="https://p.scdn.co/mp3-preview/d9b24f965612634533d7f0ba0d3ae64f4c9b92bf?cid=452e9e3c55cc45edba2aae2ce39a734c"
+        type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script>
+import { mapActions, mapState, mapWritableState } from "pinia";
+import { useDataStore } from "../stores/counter";
+import { RouterLink, RouterView } from "vue-router";
+import router from '../router'
+
+import ArtistCard from "../components/ArtistCard.vue"
+
+import MusicTable from "../components/Table.vue"
+import MusicCard from "../components/MusicCard.vue"
+
+export default {
+  components: {
+    ArtistCard,
+    MusicTable,   
+    MusicCard
+  },
+  data() {
+    return {
+      token: '',
+      search: '',
+      languages: [
+        {
+          no: "16",
+          name: "English",
+          native: "English",
+          code: "en",
+        }
+      ],
+      selectedLanguage: "en",
+      texts: [],
+      // texts: '',
+      iframeSrc: '',
+      isPaused: false,
+      spotifyId: 'spotify:episode:43cbJh4ccRD7lzM2730YK3',
+      player: null,
+      intervalId: null
+    };
+  },
+
+  async beforeMount() {
+
+  },
+
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getCurrentPlaying()
+    }, 500);
+     
+    var audio = document.getElementById("audio-preview");
+    audio.play();
+    
+  },
+
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
+
+  created() {
+    const token = localStorage.getItem('token')
+    if (token) {
+      this.token = token
+      // this.login(code)
+      this.getProfile()
+      this.getTopTracks()
+      this.getTopArtists() // iclude top tracks by top 1 artist
+      this.getRecentlyPlayed()
+      this.getTopGlobal()
+      this.getTopLocal()
+      this.getCurrentPlaying()
+    }
+    
+    
+  },
+  watch: {
+
+  },
+  computed: {
+    ...mapState(useDataStore, ["spotifyProfile", "spotifyTopTracks", 'topLocal', "recentlyPlayed", "topArtists", "topTracksByArtist", "currentlyPlaying", "tracksByTopOneSong", "searchList", "topGlobal"]),
+    // ...mapWritableState(useDataStore, ["access_token"]),
+  },
+  methods: {
+    ...mapActions(useDataStore, ["login", "getProfile", "getTopLocal", "getTopTracks", "getTopArtists", "getTopTracksByArtist", "getRecentlyPlayed", "getCurrentPlaying", "searchSongs", "getTopGlobal", "snap", "getDownloadLink"]),
+    tes() {
+    },
+    msToTimeFormat(milliseconds) {
+      var minutes = Math.floor(milliseconds / (1000 * 60));
+      var seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+      return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    },
+    playSong(id) {
+      this.iframeSrc = `https://open.spotify.com/embed/track/${id}?utm_source=generator`
+      // document.getElementById('spotify-iframe').contentWindow.postMessage('play', 'https://open.spotify.com');
+    },
+    async download(id) {
+      const link = await this.getDownloadLink(id)
+      window.location.href = "https://api.spotifydown.com/dl/Omer%20Adam%20-%20%D7%90%D7%A0%D7%99.mp3";
+    },
+    join(arr) {
+      return arr.join(',')
+    },
+    hitungPersentase(waktuBerlalu, totalWaktu) {
+      const persentase = (waktuBerlalu / totalWaktu) * 100;
+      return persentase.toFixed(2); // Pembulatan menjadi 2 digit desimal
+    }
+  },
+};
+
+
+</script>
 
 
 
-//get tracks by top 1 artist
-<div v-if="topTracksByArtist.tracks?.length" v-for="each in topTracksByArtist.tracks"> 
-      <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
-      <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
-      <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
-    </div>
+
+
+ 
+<template class="  " >
+  <div style="background-image: url('https://wallpapercave.com/wp/wp2434267.jpg');background-size: cover;"
+    class="border-4 border-red-600 p-4 ">
+
+
+ 
     
-    //get tracks by top 1 song
-    <div v-if="tracksByTopOneSong.tracks?.length" v-for="each in tracksByTopOneSong.tracks"> 
-      <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
-      <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
-      <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
-    </div>
+
+<div class="p-4 sm:ml-64 bg-red-200 ">
+   <div class="p-4 border-2 bg-white border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+     
+      
+   </div>
+</div>
+
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+  </div>
+
+
+
+
+
+  <p>my code: {{ token }}</p>
+</template>
+
+ 
+
+
+ 

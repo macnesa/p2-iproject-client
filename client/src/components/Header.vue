@@ -64,10 +64,10 @@ export default {
     </div>
     <div class=" flex justify-center gap-5  " >  <!--border border-black -->
       <RouterLink to="/">
-        <a href="#">Home</a>
+        <a href="">Home</a>
       </RouterLink>
       <RouterLink to="/search">
-        <a href="#">Search</a>
+        <a href="">Search</a>
       </RouterLink>
     </div>
     <div class=" grid grid-flow-col justify-center items-center gap-5   " >

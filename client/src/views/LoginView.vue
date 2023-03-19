@@ -10,7 +10,7 @@ export default {
       // url: `https://accounts.spotify.com/authorize?client_id=29694d93e1d24518aec34551ed349c5e&response_type=code&redirect_uri=http://localhost:3000/redirect/&scope=user-top-read%20user-read-recently-played%20user-read-currently-playing%20user-read-private`
       // url: `https://accounts.spotify.com/authorize?client_id=29694d93e1d24518aec34551ed349c5e&response_type=code&redirect_uri=https://macspotify-production.up.railway.app/redirect/&scope=user-top-read%20user-read-recently-played%20user-read-currently-playing%20user-read-private`
       // url: 'https://accounts.spotify.com/authorize?client_id=29694d93e1d24518aec34551ed349c5e&response_type=code&redirect_uri=http://localhost:5173/auth/&scope=user-top-read%20user-read-recently-played%20user-read-currently-playing'
-      url: `https://accounts.spotify.com/authorize?client_id=452e9e3c55cc45edba2aae2ce39a734c&response_type=code&redirect_uri=http://localhost:3000/redirect/&scope=user-top-read%20user-read-recently-played%20user-read-currently-playing%20user-read-private`
+      url: `https://accounts.spotify.com/authorize?client_id=452e9e3c55cc45edba2aae2ce39a734c&response_type=code&redirect_uri=http://localhost:3000/redirect/&scope=user-top-read%20user-read-recently-played%20user-read-currently-playing%20user-read-private%20user-modify-playback-state%20user-read-playback-state`
       // url: `https://www.google.com/`
     }
   },

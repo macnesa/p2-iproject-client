@@ -178,7 +178,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="each, index in searchList.tracks.items" class="bg-white border-b">
+            <tr v-for="each, index in searchList" class="bg-white border-b">
                 <th scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">
                     {{ ++index }}
                 </th>
