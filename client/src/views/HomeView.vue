@@ -401,12 +401,20 @@ export default {
       
       
        <!-- TOP 10 SONGS  -->  
-      <section v-if="topArtists.items?.length && topTracksByArtist.tracks?.length" style="background: linear-gradient(0deg, rgba(24,23,41,1) 1%, rgba(43,30,47,1) 27%, rgba(72,42,83,1) 59%, rgba(133,99,144,1) 100%);"  class=" mt-10 h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
+      <section  v-if="spotifyTopTracks?.items?.length" style="background: linear-gradient(0deg, rgba(24,23,41,1) 1%, rgba(3,27,33,1) 30%, rgba(12,51,62,1) 70%, rgba(7,77,97,1) 100%);"  class=" mt-10 h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
         
         <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-red-200 || grid grid-flow-col grid-cols-[max-content_1fr]  ">
         
-          <div class="border-4 border-l-blue-200 grid justify-center items-end ">
-            <img :src="topArtists.items[0].images[1].url" class="w-[20rem] h-[20rem]" alt="">   
+          <div class="grid items-center self-end" >
+            <div class="border-4 w-[20rem] h-[20rem] border-l-blue-200 grid grid-flow-col grid-cols-[1fr_1fr] grid-rows-[1fr_1fr] ">
+              
+              
+              <img :src="spotifyTopTracks.items[0].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[1].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[2].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[3].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              
+            </div>
           </div>
           
           <div class="border border-l-fuchsia-600 flex flex-col justify-end px-4 ">
@@ -427,7 +435,7 @@ export default {
         
         
          
-        <div v-if="topTracksByArtist?.tracks?.length" style="background-color: rgba(0, 0, 0, 0.33);" class="relative overflow-x-auto  ">
+        <div style="background-color: rgba(0, 0, 0, 0.33);" class="relative overflow-x-auto  ">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class=" border-b border-gray-800 text-gray-700 dark:text-gray-400">
                     <tr >
@@ -449,7 +457,7 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="each, index in topTracksByArtist.tracks" class=" teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white ">
+                    <tr v-for="each, index in spotifyTopTracks.items" class=" teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white ">
                       <!-- <button> -->
                         <th scope="row" class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
                             {{ ++index }}
@@ -471,17 +479,23 @@ export default {
                 </tbody>
             </table>
         </div>
-        <div v-else>
-            <p>No data is currently available</p>
-        </div>
+ 
         
         
          
       </section>
+      <div v-else>
+            <p>No data is currently available</p>
+        </div>
       
       
-      
-      
+       <ul v-if="spotifyTopTracks?.items?.length" > 
+          <li>your top tracks</li> 
+          <li v-for="each in spotifyTopTracks.items" > 
+            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }}  - {{ each.artists[0].name }} - {{ msToTimeFormat(each.duration_ms)  }} - {{ each.album.name }}   
+          </li>
+        </ul>
       
       
         

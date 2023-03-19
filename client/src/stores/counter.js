@@ -86,7 +86,7 @@ export const useDataStore = defineStore('data', {
         
         let trackId = req.data.items[0].id
         let artistId = req.data.items[0].artists[0].id 
-        // console.log(artistId, trackId, "lecha dodi likrat kallah" );
+        console.log(req.data, "TOP 10 SONGS" );
         
         await this.getTracksByTopOneTrack(trackId, artistId) 
         
