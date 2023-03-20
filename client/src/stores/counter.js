@@ -97,78 +97,89 @@ export const useDataStore = defineStore('data', {
     },
     
     async getTracksByTopOneTrack(a, b) {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/tracksByTopOneTrack?trackId=${a}&artistId=${b}`,
-            method: 'get',
-            headers: {
-              access_token: localStorage.getItem('token')
-            }
-          })
-        this.tracksByTopOneSong = req.data 
-        console.log(req.data, " oyuoyvey");
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/tracksByTopOneTrack?trackId=${a}&artistId=${b}`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
+      //   localStorage.setItem("tracksByTopOneSong", req.data) 
+      //   this.tracksByTopOneSong = req.data 
+      //   console.log(req.data, " oyuoyvey");
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.tracksByTopOneSong = localStorage.getItem("tracksByTopOneSong") 
+
     },
     
      
     
     
     async getTopArtists() {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/topArtists`,
-            method: 'get',
-            headers: {
-              access_token: localStorage.getItem('token')
-            }
-          })
-        this.topArtists = req.data
-        await this.getTopTracksByArtist(req.data.items[0].id)
-        console.log(req.data);
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/topArtists`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
+      //   localStorage.setItem('topArtists', JSON.stringify(req.data))
+      //   this.topArtists = req.data
+      //   await this.getTopTracksByArtist(req.data.items[0].id)
+      //   console.log(req.data);
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.getTopTracksByArtist()
+      this.topArtists = JSON.parse(localStorage.getItem("topArtists")) 
+      console.log(this.topArtists, "topArtists");
     },
     
     async getTopTracksByArtist(artistId) {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/topTracksByArtist/?artistId=${artistId}`,
-            method: 'get',
-            headers: {
-              access_token: localStorage.getItem('token')
-            }
-          })
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/topTracksByArtist/?artistId=${artistId}`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
           
-          
-          
-        this.topTracksByArtist = req.data
-        console.log(req.data, "LASHEM SHAAAMAYIM");
-      } catch (error) {
-        console.log(error);
-      }
+      //   localStorage.setItem("topTracksByArtist", JSON.stringify(req.data))    
+      //   this.topTracksByArtist = req.data
+      //   console.log(req.data, "LASHEM SHAAAMAYIM");
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.topTracksByArtist = JSON.parse(localStorage.getItem("topTracksByArtist"))
+      console.log(this.topTracksByArtist, "getTopTracksByArtist");
     },
 
     async getRecentlyPlayed() {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/recently`,
-            method: 'get',
-            headers: {
-              access_token: localStorage.getItem('token')
-            }
-          })
-        this.recentlyPlayed = req.data
-        console.log(req.data);
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/recently`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
+      //   localStorage.setItem("recentlyPlayed", JSON.stringify(req.data))   
+      //   this.recentlyPlayed = req.data
+      //   console.log(req.data);
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.recentlyPlayed = JSON.parse(localStorage.getItem("recentlyPlayed"))
+      console.log(this.recentlyPlayed, "getRecentlyPlayed");
     },
     
     
@@ -213,81 +224,89 @@ export const useDataStore = defineStore('data', {
     
     
 
-    // async searchSongs(string) {
-    //   const encodedString = encodeURIComponent(string);
-    //   try {
-    //     const req = await
-    //       axios({
-    //         url: `${this.baseUrl}/findSongs?q=${encodedString}`,
-    //         method: 'get',
-    //         headers: {
-    //           access_token: localStorage.getItem('token')
-    //         }
-    //       })
-    //     this.searchList = req.data.tracks.items
-    //     console.log(req.data.tracks.items);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
-    
-    async searchSongs(string) { 
-       
+    async searchSongs(string) {
+      const encodedString = encodeURIComponent(string);
       try {
         const req = await
           axios({
-            url: `${this.baseUrl}/findSongsByAi`,
-            method: 'post',
-            headers: {
-              access_token: localStorage.getItem('token'),  
-            },
-            data: {
-              keyword: "strin"
-            }
-          })
-        this.searchList = req.data
-        console.log(req.data, "aha aha aha aha aha");
-      } catch (error) {
-        console.log(error);
-      }
-      
-       
-    },
-    
-     
-    async getTopGlobal() {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/topGlobal`,
+            url: `${this.baseUrl}/findSongs?q=${encodedString}`,
             method: 'get',
             headers: {
               access_token: localStorage.getItem('token')
             }
           })
-        this.topGlobal = req.data
-        console.log(req.data);
+        this.searchList = req.data.tracks.items
+        console.log(req.data.tracks.items);
       } catch (error) {
         console.log(error);
       }
+    },
+    
+    // async searchSongs(string) { 
+       
+    //   try {
+    //     const req = await
+    //       axios({
+    //         url: `${this.baseUrl}/findSongsByAi`,
+    //         method: 'post',
+    //         headers: {
+    //           access_token: localStorage.getItem('token'),  
+    //         },
+    //         data: {
+    //           keyword: "strin"
+    //         }
+    //       })
+    //     this.searchList = req.data
+    //     console.log(req.data, "aha aha aha aha aha");
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+      
+       
+    // },
+    
+     
+    async getTopGlobal() {
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/topGlobal`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
+      //   localStorage.setItem("topGlobal", JSON.stringify(req.data))     
+      //   this.topGlobal = req.data
+      //   console.log(req.data);
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.topGlobal = JSON.parse(localStorage.getItem("topGlobal"))
+      console.log(this.topGlobal, "topGlobal");
+
     },
     
     
     async getTopLocal() {
-      try {
-        const req = await
-          axios({
-            url: `${this.baseUrl}/TopLocal`,
-            method: 'get',
-            headers: {
-              access_token: localStorage.getItem('token')
-            }
-          })
-        this.topLocal = req.data
-        console.log(req.data, "TOP LOCAL");
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   const req = await
+      //     axios({
+      //       url: `${this.baseUrl}/TopLocal`,
+      //       method: 'get',
+      //       headers: {
+      //         access_token: localStorage.getItem('token')
+      //       }
+      //     })
+      //   localStorage.setItem("topLocal", JSON.stringify(req.data))
+      //   this.topLocal = req.data
+      //   console.log(req.data, "TOP LOCAL");
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      this.topLocal = JSON.parse(localStorage.getItem("topLocal"))
+      console.log(this.topLocal, "topLocal");
+
     },
     
     

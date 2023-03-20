@@ -7,7 +7,7 @@ import { RouterLink, RouterView } from "vue-router";
 import router from '../router'
 
 import ArtistCard from "../components/ArtistCard.vue"
-
+import MusicPlayer from "../components/MusicPlayer.vue";
 import MusicTable from "../components/Table.vue"
 import MusicCard from "../components/MusicCard.vue"
 
@@ -15,7 +15,8 @@ export default {
   components: {
     ArtistCard,
     MusicTable,
-    MusicCard
+    MusicCard,
+    MusicPlayer
   },
   data() {
     return {
@@ -37,7 +38,8 @@ export default {
       spotifyId: 'spotify:episode:43cbJh4ccRD7lzM2730YK3',
       player: null,
       intervalId: null,
-      isPlaying: false
+      isPlaying: false,
+      musicPlayerData: null
     };
   },
 
@@ -48,11 +50,13 @@ export default {
   mounted() {
     this.intervalId = setInterval(() => {
       this.getCurrentPlaying()
-    }, 500);
+    }, 50000);
 
     // var audio = document.getElementById("audio-preview");
     // audio.play();
 
+     
+    
   },
 
   beforeDestroy() {
@@ -78,10 +82,15 @@ export default {
   watch: {
 
   },
+  
+  
   computed: {
     ...mapState(useDataStore, ["spotifyProfile", "spotifyTopTracks", 'topLocal', "recentlyPlayed", "topArtists", "topTracksByArtist", "currentlyPlaying", "tracksByTopOneSong", "searchList", "topGlobal"]),
     // ...mapWritableState(useDataStore, ["access_token"]),
   },
+  
+  
+  
   methods: {
     ...mapActions(useDataStore, ["login", "getProfile", "getTopLocal", "getTopTracks", "getTopArtists", "getTopTracksByArtist", "getRecentlyPlayed", "getCurrentPlaying", "searchSongs", "getTopGlobal", "snap", "getDownloadLink"]),
     tes() {
@@ -106,11 +115,30 @@ export default {
       const persentase = (waktuBerlalu / totalWaktu) * 100;
       return persentase.toFixed(2); // Pembulatan menjadi 2 digit desimal
     },
-    togglePlay() {
+    
+    togglePlay(data) {
       this.isPlaying = !this.isPlaying;
+      this.musicPlayerData = data;
+    },
+    
+    playMusic(data) {
+      this.musicPlayerData = data;
+      alert('NGENTOT', this.musicPlayerData);
+    },
+    
+    isPreviewAvailable(data) {
+      if(!data.preview_url) {
+        return "pointer-events-none" 
+      }
     }
+    
   },
 };
+
+
+ 
+
+ 
 
 
 </script>
@@ -121,19 +149,15 @@ export default {
     
      
 <template class="  " >
-  <div style="background-image: url('https://wallpapercave.com/wp/wp2434267.jpg');background-size: cover;"
+  <!-- 'https://wallpapercave.com/wp/wp2434267.jpg' -->
+  <div style="background-image: url();background-size: cover;"
     class="border-4 border-red-600 p-4 ">
 
+ 
 
-
-
-
-    <div class="p-4 sm:ml-64 bg-red-200 ">
-
-      <div class="p-4 border-2 bg-yellow-800 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-
-
-
+      <MusicPlayer v-if="musicPlayerData" :data="musicPlayerData" />
+     
+ 
 
         <!-- TOP SONG --> 
         <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Song</p>
@@ -176,7 +200,7 @@ export default {
                 
               <div class="flex items-center">  
                 
-                <div class=" w-[max-content]  flex justify-center items-center" @click="togglePlay">
+                <div class=" w-[max-content]  flex justify-center items-center" @click="togglePlay(spotifyTopTracks.items[0])">
                   <!-- <div class="play" v-if="!isPlaying"></div>  -->
                   <!-- <div class="pause" v-if="isPlaying"></div> -->
                   <ion-icon class="w-20 h-20 text-green-400 " v-if="!isPlaying" name="play-circle-sharp"></ion-icon>
@@ -347,7 +371,7 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="each, index in topTracksByArtist.tracks" class=" teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white ">
+                    <tr v-for="each, index in topTracksByArtist.tracks"  @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white`  ">
                       <!-- <button> -->
                         <th scope="row" class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
                             {{ ++index }}
@@ -457,9 +481,9 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="each, index in spotifyTopTracks.items" class=" teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white ">
+                    <tr v-for="each, index in spotifyTopTracks.items" @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white` ">
                       <!-- <button> -->
-                        <th scope="row" class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
+                        <th scope="row"  class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
                             {{ ++index }}
                         </th>
                         <td class="pr-6 py-2 flex  border-white ">
@@ -486,33 +510,151 @@ export default {
       </section>
       <div v-else>
             <p>No data is currently available</p>
-        </div>
-      
-      
-       <ul v-if="spotifyTopTracks?.items?.length" > 
-          <li>your top tracks</li> 
-          <li v-for="each in spotifyTopTracks.items" > 
-            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
-            {{ each.name }}  - {{ each.artists[0].name }} - {{ msToTimeFormat(each.duration_ms)  }} - {{ each.album.name }}   
-          </li>
-        </ul>
-      
-      
-        
-        
-        
-        
       </div>
+      
+      
+       
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+       <!-- TOP ARTIST --> 
+       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Artist</p>
+        <section v-if="topArtists.items?.length"
+          class="  h-[20rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center">
+          
+          <section style="filter:brightness(1);  "
+            class="     text-[100%] grid  grid-flow-col border-4 border-red-400    ">
+            
+            <div v-for="each, index in topArtists.items" :key="index" class="border border-white w-32 text-center ">
+              <img class="w-full h-32 rounded-full" :src="each.images[0].url" alt="Large avatar">
+              <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ each.name }}</p>
+            </div>
+             
+            
+          </section>
 
+        </section>
+        <section v-else>
+          <p>No data is currently available</p>
+        </section>
+        <!-- END TOP ARTISTS -->
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        
+        
+       <!-- TOP GLOBAL --> 
+       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top global</p>
+        <section v-if="topGlobal.tracks?.items?.length"
+          class=" w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3 ">
+          
+          
+        <tr v-for="each, index in topGlobal.tracks.items" @dblclick="playMusic(each.track)" :class=" `teer ${isPreviewAvailable(each.track)} dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white` ">
+        <!-- <button> -->
+          
+          <td class="pr-6 py-2 flex  border-white ">
+            <img :src="each.track.album.images[1].url" width="50" height="50" alt="">
+            <div class="ml-2 p-0  flex flex-col justify-center truncate " >
+              <p class="font-semibold text-[1rem] flex  dark:text-white  border-red-300 " >{{ each.track.name }}</p>
+              <!-- * {{ each.track.album.name }} * {{new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() -->
+              <p class="font-semibold text-sm  border-red-300" >{{ each.track.artists[0].name }}</p>
+            </div>
+          </td>
+          <!-- <td class="px-6 py-2 font-semibold">
+              {{ each.album.name }}
+            </td>
+            <td class="px-6 py-2 font-semibold">
+                {{ msToTimeFormat(each.duration_ms) }}
+            </td>  -->
+        </tr>
+          
+          
 
+        </section>
+        <section v-else>
+          <p>No data is currently available</p>
+        </section>
+        <!-- END TOP GLOBAL -->
+        
+        
+        
+        
+        
+        
+        
+        
+        
+         <!-- TOP COUNTRY BASED --> 
+       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Based from your country</p>
+        <section v-if="topLocal.tracks?.items?.length"
+          class=" w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3 ">
+          
+          
+        <tr v-for="each, index in topLocal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white `">
+        <!-- <button> -->
+          
+          <td class="pr-6 py-2 flex  border-white ">
+            <img :src="each.track.album.images[1].url" width="50" height="50" alt="">
+            <div class="ml-2 p-0  flex flex-col justify-center truncate " >
+              <p class="font-semibold text-[1rem] flex  dark:text-white  border-red-300 " >{{ each.track.name }}</p>
+              <!-- * {{ each.track.album.name }} * {{new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() -->
+              <p class="font-semibold text-sm  border-red-300" >{{ each.track.artists[0].name }}</p>
+            </div>
+          </td>
+          <!-- <td class="px-6 py-2 font-semibold">
+              {{ each.album.name }}
+            </td>
+            <td class="px-6 py-2 font-semibold">
+                {{ msToTimeFormat(each.duration_ms) }}
+            </td>  -->
+        </tr>
+          
+          
 
+        </section>
+        <section v-else>
+          <p>No data is currently available</p>
+        </section>
+        <!-- END COUNTRY BASED -->
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+         
 
 
       <p class="text-white">my code: {{ token }}</p>
 
 
-
-    </div>
+ 
 
   </div>
 </template>
@@ -520,63 +662,862 @@ export default {
 
 <style>
 
-.teer:active {
-  background-color: white;
-}
-.teer:focus {
-  background-color: white;
-}
+  
 
-.circle-container {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #aaa;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
+  
 
-.circle-container.playing {
-  background-color: #66bb6a;
-}
 
-.play,
-.pause {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 0;
-  height: 0;
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-}
 
-.play {
-  border-right: 20px solid white;
-}
 
-.pause {
-  width: 12px;
-  height: 24px;
-  background-color: white;
-  display: flex;
-}
 
-.pause:before,
-.pause:after {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background-color: white;
-}
 
-.pause:before {
-  margin-right: 4px;
-}
+  
 
-.pause:after {
-  margin-left: 4px;
-}
+
+
+
+  .teer:active {
+    background-color: white;
+  }
+  .teer:focus {
+    background-color: white;
+  }
+
+  .circle-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #aaa;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .circle-container.playing {
+    background-color: #66bb6a;
+  }
+
+  .play,
+  .pause {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+  }
+
+  .play {
+    border-right: 20px solid white;
+  }
+
+  .pause {
+    width: 12px;
+    height: 24px;
+    background-color: white;
+    display: flex;
+  }
+
+  .pause:before,
+  .pause:after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    background-color: white;
+  }
+
+  .pause:before {
+    margin-right: 4px;
+  }
+
+  .pause:after {
+    margin-left: 4px;
+  }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "album": {
+      "album_type": "SINGLE",
+      "artists": [
+          {
+              "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/3JPKPnzWJGjccn8SnjwA5i"
+              },
+              "href": "https://api.spotify.com/v1/artists/3JPKPnzWJGjccn8SnjwA5i",
+              "id": "3JPKPnzWJGjccn8SnjwA5i",
+              "name": "Agam Buhbut",
+              "type": "artist",
+              "uri": "spotify:artist:3JPKPnzWJGjccn8SnjwA5i"
+          },
+          {
+              "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/4rSGpKNO4s1iBN4yPMaVj9"
+              },
+              "href": "https://api.spotify.com/v1/artists/4rSGpKNO4s1iBN4yPMaVj9",
+              "id": "4rSGpKNO4s1iBN4yPMaVj9",
+              "name": "הלהקות הצבאיות",
+              "type": "artist",
+              "uri": "spotify:artist:4rSGpKNO4s1iBN4yPMaVj9"
+          }
+      ],
+      "available_markets": [
+          "AD",
+          "AE",
+          "AR",
+          "AT",
+          "AU",
+          "BE",
+          "BG",
+          "BH",
+          "BO",
+          "BR",
+          "CA",
+          "CH",
+          "CL",
+          "CO",
+          "CR",
+          "CY",
+          "CZ",
+          "DE",
+          "DK",
+          "DO",
+          "DZ",
+          "EC",
+          "EE",
+          "EG",
+          "ES",
+          "FI",
+          "FR",
+          "GB",
+          "GR",
+          "GT",
+          "HK",
+          "HN",
+          "HU",
+          "ID",
+          "IE",
+          "IL",
+          "IN",
+          "IS",
+          "IT",
+          "JO",
+          "JP",
+          "KW",
+          "LB",
+          "LI",
+          "LT",
+          "LU",
+          "LV",
+          "MA",
+          "MC",
+          "MT",
+          "MX",
+          "MY",
+          "NI",
+          "NL",
+          "NO",
+          "NZ",
+          "OM",
+          "PA",
+          "PE",
+          "PH",
+          "PL",
+          "PS",
+          "PT",
+          "PY",
+          "QA",
+          "RO",
+          "SA",
+          "SE",
+          "SG",
+          "SK",
+          "SV",
+          "TH",
+          "TN",
+          "TR",
+          "TW",
+          "US",
+          "UY",
+          "VN",
+          "ZA"
+      ],
+      "external_urls": {
+          "spotify": "https://open.spotify.com/album/7BMY5SxiMOelOqPEbINxHR"
+      },
+      "href": "https://api.spotify.com/v1/albums/7BMY5SxiMOelOqPEbINxHR",
+      "id": "7BMY5SxiMOelOqPEbINxHR",
+      "images": [
+          {
+              "height": 640,
+              "url": "https://i.scdn.co/image/ab67616d0000b2734b19a192287a471f55259333",
+              "width": 640
+          },
+          {
+              "height": 300,
+              "url": "https://i.scdn.co/image/ab67616d00001e024b19a192287a471f55259333",
+              "width": 300
+          },
+          {
+              "height": 64,
+              "url": "https://i.scdn.co/image/ab67616d000048514b19a192287a471f55259333",
+              "width": 64
+          }
+      ],
+      "name": "שומר אחי אנוכי",
+      "release_date": "2022-05-18",
+      "release_date_precision": "day",
+      "total_tracks": 1,
+      "type": "album",
+      "uri": "spotify:album:7BMY5SxiMOelOqPEbINxHR"
+  },
+  "artists": [
+      {
+          "external_urls": {
+              "spotify": "https://open.spotify.com/artist/3JPKPnzWJGjccn8SnjwA5i"
+          },
+          "href": "https://api.spotify.com/v1/artists/3JPKPnzWJGjccn8SnjwA5i",
+          "id": "3JPKPnzWJGjccn8SnjwA5i",
+          "name": "Agam Buhbut",
+          "type": "artist",
+          "uri": "spotify:artist:3JPKPnzWJGjccn8SnjwA5i"
+      },
+      {
+          "external_urls": {
+              "spotify": "https://open.spotify.com/artist/4rSGpKNO4s1iBN4yPMaVj9"
+          },
+          "href": "https://api.spotify.com/v1/artists/4rSGpKNO4s1iBN4yPMaVj9",
+          "id": "4rSGpKNO4s1iBN4yPMaVj9",
+          "name": "הלהקות הצבאיות",
+          "type": "artist",
+          "uri": "spotify:artist:4rSGpKNO4s1iBN4yPMaVj9"
+      }
+  ],
+  "available_markets": [
+      "AD",
+      "AE",
+      "AR",
+      "AT",
+      "AU",
+      "BE",
+      "BG",
+      "BH",
+      "BO",
+      "BR",
+      "CA",
+      "CH",
+      "CL",
+      "CO",
+      "CR",
+      "CY",
+      "CZ",
+      "DE",
+      "DK",
+      "DO",
+      "DZ",
+      "EC",
+      "EE",
+      "EG",
+      "ES",
+      "FI",
+      "FR",
+      "GB",
+      "GR",
+      "GT",
+      "HK",
+      "HN",
+      "HU",
+      "ID",
+      "IE",
+      "IL",
+      "IN",
+      "IS",
+      "IT",
+      "JO",
+      "JP",
+      "KW",
+      "LB",
+      "LI",
+      "LT",
+      "LU",
+      "LV",
+      "MA",
+      "MC",
+      "MT",
+      "MX",
+      "MY",
+      "NI",
+      "NL",
+      "NO",
+      "NZ",
+      "OM",
+      "PA",
+      "PE",
+      "PH",
+      "PL",
+      "PS",
+      "PT",
+      "PY",
+      "QA",
+      "RO",
+      "SA",
+      "SE",
+      "SG",
+      "SK",
+      "SV",
+      "TH",
+      "TN",
+      "TR",
+      "TW",
+      "US",
+      "UY",
+      "VN",
+      "ZA"
+  ],
+  "disc_number": 1,
+  "duration_ms": 225112,
+  "explicit": false,
+  "external_ids": {
+      "isrc": "UKR6V2290873"
+  },
+  "external_urls": {
+      "spotify": "https://open.spotify.com/track/3fVyiIB5BT5KjSqoRTeqce"
+  },
+  "href": "https://api.spotify.com/v1/tracks/3fVyiIB5BT5KjSqoRTeqce",
+  "id": "3fVyiIB5BT5KjSqoRTeqce",
+  "is_local": false,
+  "name": "שומר אחי אנוכי",
+  "popularity": 15,
+  "preview_url": "https://p.scdn.co/mp3-preview/062567ef4150f1d6d7bfb47dd861483dcd008ac1?cid=79fab6b902af4bd6b4c192b808b8a074",
+  "track_number": 1,
+  "type": "track",
+  "uri": "spotify:track:3fVyiIB5BT5KjSqoRTeqce"
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "added_at": "2023-03-19T10:22:35Z",
+  "added_by": {
+      "external_urls": {
+          "spotify": "https://open.spotify.com/user/"
+      },
+      "href": "https://api.spotify.com/v1/users/",
+      "id": "",
+      "type": "user",
+      "uri": "spotify:user:"
+  },
+  "is_local": false,
+  "primary_color": null,
+  "track": {
+      "album": {
+          "album_group": "album",
+          "album_type": "album",
+          "artists": [
+              {
+                  "external_urls": {
+                      "spotify": "https://open.spotify.com/artist/5YGY8feqx7naU7z4HrwZM6"
+                  },
+                  "href": "https://api.spotify.com/v1/artists/5YGY8feqx7naU7z4HrwZM6",
+                  "id": "5YGY8feqx7naU7z4HrwZM6",
+                  "name": "Miley Cyrus",
+                  "type": "artist",
+                  "uri": "spotify:artist:5YGY8feqx7naU7z4HrwZM6"
+              }
+          ],
+          "available_markets": [
+              "AD",
+              "AE",
+              "AG",
+              "AL",
+              "AM",
+              "AO",
+              "AR",
+              "AT",
+              "AU",
+              "AZ",
+              "BA",
+              "BB",
+              "BD",
+              "BE",
+              "BF",
+              "BG",
+              "BH",
+              "BI",
+              "BJ",
+              "BN",
+              "BO",
+              "BR",
+              "BS",
+              "BT",
+              "BW",
+              "BY",
+              "BZ",
+              "CA",
+              "CD",
+              "CG",
+              "CH",
+              "CI",
+              "CL",
+              "CM",
+              "CO",
+              "CR",
+              "CV",
+              "CW",
+              "CY",
+              "CZ",
+              "DE",
+              "DJ",
+              "DK",
+              "DM",
+              "DO",
+              "DZ",
+              "EC",
+              "EE",
+              "EG",
+              "ES",
+              "ET",
+              "FI",
+              "FJ",
+              "FM",
+              "FR",
+              "GA",
+              "GB",
+              "GD",
+              "GE",
+              "GH",
+              "GM",
+              "GN",
+              "GQ",
+              "GR",
+              "GT",
+              "GW",
+              "GY",
+              "HK",
+              "HN",
+              "HR",
+              "HT",
+              "HU",
+              "ID",
+              "IE",
+              "IL",
+              "IN",
+              "IQ",
+              "IS",
+              "IT",
+              "JM",
+              "JO",
+              "JP",
+              "KE",
+              "KG",
+              "KH",
+              "KI",
+              "KM",
+              "KN",
+              "KR",
+              "KW",
+              "KZ",
+              "LA",
+              "LB",
+              "LC",
+              "LI",
+              "LK",
+              "LR",
+              "LS",
+              "LT",
+              "LU",
+              "LV",
+              "LY",
+              "MA",
+              "MC",
+              "MD",
+              "ME",
+              "MG",
+              "MH",
+              "MK",
+              "ML",
+              "MN",
+              "MO",
+              "MR",
+              "MT",
+              "MU",
+              "MV",
+              "MW",
+              "MX",
+              "MY",
+              "MZ",
+              "NA",
+              "NE",
+              "NG",
+              "NI",
+              "NL",
+              "NO",
+              "NP",
+              "NR",
+              "NZ",
+              "OM",
+              "PA",
+              "PE",
+              "PG",
+              "PH",
+              "PK",
+              "PL",
+              "PS",
+              "PT",
+              "PW",
+              "PY",
+              "QA",
+              "RO",
+              "RS",
+              "RW",
+              "SA",
+              "SB",
+              "SC",
+              "SE",
+              "SG",
+              "SI",
+              "SK",
+              "SL",
+              "SM",
+              "SN",
+              "SR",
+              "ST",
+              "SV",
+              "SZ",
+              "TD",
+              "TG",
+              "TH",
+              "TJ",
+              "TL",
+              "TN",
+              "TO",
+              "TR",
+              "TT",
+              "TV",
+              "TW",
+              "TZ",
+              "UA",
+              "UG",
+              "US",
+              "UY",
+              "UZ",
+              "VC",
+              "VE",
+              "VN",
+              "VU",
+              "WS",
+              "XK",
+              "ZA",
+              "ZM",
+              "ZW"
+          ],
+          "external_urls": {
+              "spotify": "https://open.spotify.com/album/0HiZ8fNXwJOQcrf5iflrdz"
+          },
+          "href": "https://api.spotify.com/v1/albums/0HiZ8fNXwJOQcrf5iflrdz",
+          "id": "0HiZ8fNXwJOQcrf5iflrdz",
+          "images": [
+              {
+                  "height": 640,
+                  "url": "https://i.scdn.co/image/ab67616d0000b27358039b5147731b6e52202e46",
+                  "width": 640
+              },
+              {
+                  "height": 300,
+                  "url": "https://i.scdn.co/image/ab67616d00001e0258039b5147731b6e52202e46",
+                  "width": 300
+              },
+              {
+                  "height": 64,
+                  "url": "https://i.scdn.co/image/ab67616d0000485158039b5147731b6e52202e46",
+                  "width": 64
+              }
+          ],
+          "is_playable": true,
+          "name": "Endless Summer Vacation",
+          "release_date": "2023-03-10",
+          "release_date_precision": "day",
+          "total_tracks": 13,
+          "type": "album",
+          "uri": "spotify:album:0HiZ8fNXwJOQcrf5iflrdz"
+      },
+      "artists": [
+          {
+              "external_urls": {
+                  "spotify": "https://open.spotify.com/artist/5YGY8feqx7naU7z4HrwZM6"
+              },
+              "href": "https://api.spotify.com/v1/artists/5YGY8feqx7naU7z4HrwZM6",
+              "id": "5YGY8feqx7naU7z4HrwZM6",
+              "name": "Miley Cyrus",
+              "type": "artist",
+              "uri": "spotify:artist:5YGY8feqx7naU7z4HrwZM6"
+          }
+      ],
+      "available_markets": [
+          "AR",
+          "AU",
+          "AT",
+          "BE",
+          "BO",
+          "BR",
+          "BG",
+          "CA",
+          "CL",
+          "CO",
+          "CR",
+          "CY",
+          "CZ",
+          "DK",
+          "DO",
+          "DE",
+          "EC",
+          "EE",
+          "SV",
+          "FI",
+          "FR",
+          "GR",
+          "GT",
+          "HN",
+          "HK",
+          "HU",
+          "IS",
+          "IE",
+          "IT",
+          "LV",
+          "LT",
+          "LU",
+          "MY",
+          "MT",
+          "MX",
+          "NL",
+          "NZ",
+          "NI",
+          "NO",
+          "PA",
+          "PY",
+          "PE",
+          "PH",
+          "PL",
+          "PT",
+          "SG",
+          "SK",
+          "ES",
+          "SE",
+          "CH",
+          "TW",
+          "TR",
+          "UY",
+          "US",
+          "GB",
+          "AD",
+          "LI",
+          "MC",
+          "ID",
+          "JP",
+          "TH",
+          "VN",
+          "RO",
+          "IL",
+          "ZA",
+          "SA",
+          "AE",
+          "BH",
+          "QA",
+          "OM",
+          "KW",
+          "EG",
+          "MA",
+          "DZ",
+          "TN",
+          "LB",
+          "JO",
+          "PS",
+          "IN",
+          "BY",
+          "KZ",
+          "MD",
+          "UA",
+          "AL",
+          "BA",
+          "HR",
+          "ME",
+          "MK",
+          "RS",
+          "SI",
+          "KR",
+          "BD",
+          "PK",
+          "LK",
+          "GH",
+          "KE",
+          "NG",
+          "TZ",
+          "UG",
+          "AG",
+          "AM",
+          "BS",
+          "BB",
+          "BZ",
+          "BT",
+          "BW",
+          "BF",
+          "CV",
+          "CW",
+          "DM",
+          "FJ",
+          "GM",
+          "GE",
+          "GD",
+          "GW",
+          "GY",
+          "HT",
+          "JM",
+          "KI",
+          "LS",
+          "LR",
+          "MW",
+          "MV",
+          "ML",
+          "MH",
+          "FM",
+          "NA",
+          "NR",
+          "NE",
+          "PW",
+          "PG",
+          "WS",
+          "SM",
+          "ST",
+          "SN",
+          "SC",
+          "SL",
+          "SB",
+          "KN",
+          "LC",
+          "VC",
+          "SR",
+          "TL",
+          "TO",
+          "TT",
+          "TV",
+          "VU",
+          "AZ",
+          "BN",
+          "BI",
+          "KH",
+          "CM",
+          "TD",
+          "KM",
+          "GQ",
+          "SZ",
+          "GA",
+          "GN",
+          "KG",
+          "LA",
+          "MO",
+          "MR",
+          "MN",
+          "NP",
+          "RW",
+          "TG",
+          "UZ",
+          "ZW",
+          "BJ",
+          "MG",
+          "MU",
+          "MZ",
+          "AO",
+          "CI",
+          "DJ",
+          "ZM",
+          "CD",
+          "CG",
+          "IQ",
+          "LY",
+          "TJ",
+          "VE",
+          "ET",
+          "XK"
+      ],
+      "disc_number": 1,
+      "duration_ms": 200600,
+      "episode": false,
+      "explicit": false,
+      "external_ids": {
+          "isrc": "USSM12209777"
+      },
+      "external_urls": {
+          "spotify": "https://open.spotify.com/track/4DHcnVTT87F0zZhRPYmZ3B"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4DHcnVTT87F0zZhRPYmZ3B",
+      "id": "4DHcnVTT87F0zZhRPYmZ3B",
+      "is_local": false,
+      "name": "Flowers",
+      "popularity": 82,
+      "preview_url": "https://p.scdn.co/mp3-preview/5184d19d1b7fcc3e7c067e38af45a7cc80851440?cid=79fab6b902af4bd6b4c192b808b8a074",
+      "track": true,
+      "track_number": 1,
+      "type": "track",
+      "uri": "spotify:track:4DHcnVTT87F0zZhRPYmZ3B"
+  },
+  "video_thumbnail": {
+      "url": null
+  }
+},
