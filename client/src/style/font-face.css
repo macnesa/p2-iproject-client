@@ -1,0 +1,42 @@
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew&display=swap');
+
+
+
+/* GOTHAM */
+@font-face {
+  font-family: 'Gotham';
+  src: url('../assets/fonts/gotham-spotify-font/Gotham-Black.otf') format('opentype');
+  font-weight: bolder;  
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('../assets/fonts/gotham-spotify-font/Gotham-Bold.otf') format('opentype');
+  font-weight: 700; 
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('../assets/fonts/gotham-spotify-font/GothamMedium.ttf') format('truetype');
+  font-weight: 600;  
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('../assets/fonts/gotham-spotify-font/GothamBook.ttf') format('truetype');
+  font-weight: 400;  
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('../assets/fonts/gotham-spotify-font/Gotham-Light.otf') format('opentype');
+  font-weight: 300;  
+}
+
+
+ 

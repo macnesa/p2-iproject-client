@@ -155,46 +155,65 @@
 <template>
   
   
-<section v-if="data" id="audioControls" class="border border-white">
+<section v-if="data" id="audioControls" class="fixed z-50 top-0 left-[60vw] right-4 p-2 bg-yellow-800 text-white rounded-xl" style="max-width: 600px;"> 
   
-   <section class="border border-white">
-      <img :src="data.album.images[0].url" class="w-20 h-20" />
-   </section>
-   <!-- https://i.scdn.co/image/ab67616d0000b273f6d6d1005e2dbe28c312fe2f -->
-   
-   <section class="border border-white w-[70%]">
-    <p class="text-xs text-gray-900 dark:text-white font-bold">{{ data.name }}</p>
-    <p class="text-xs text-gray-900 dark:text-white">{{ data.artists[0].name  }}</p>
-        <div id="progress">
-      <div id="progressBar"></div>
-    </div>
+   <section class=" border-white  ">
+      <img style="box-shadow: -1px -1px 30px -9px rgba(0,0,0,0.3) " :src="data.album.images[0].url" class="w-20 h-20 rounded-xl" />
    </section>
    
-  <!-- <section class="border border-red-200"> -->
-      <button id="playBtn">
-        <ion-icon class="w-10 h-10 text-green-400 " v-if="!isPlaying" name="play-circle-sharp"></ion-icon>
-        <ion-icon class="w-10 h-10 text-green-400 " v-if="isPlaying" name="pause-circle-sharp"></ion-icon>
-      </button>
-
-    <div id="volumeControl" class="">
+   <section class="  border-white pl-4 ">
+    <section class=" border-white flex justify-between items-center ">
+    <p class="text-normal text-md  font-sans text-gray-900 dark:text-white font-bold">{{ data.name }}</p>
+    <p style="background: rgba(255, 255, 255, 0.766);color:black;" class="text-[0.6rem]  border-white px-1 py-[1px] font-semibold font-sans rounded-sm " >PREVIEW</p>
+    </section>
+    
+    <p style="color: rgba(255, 255, 255, 0.666)" class="text-xs font-semibold font-sans ">{{ data.artists[0].name  }}</p>
+    
+    <section class=" grid grid-flow-col grid-cols-[1fr_max-content]   border-red-400 w-[90%] items-center  ">
       
-      <div id="volumeBar" class="">
-        <div id="volumeLevel"></div>
-      </div>
+      <section class="grid grid-flow-col     mr-4 items-center grid-cols-[80%_20%]  border-white mt-2 ">
+        
+        <div id="progress" class="  border-red-400 ">
+          <div id="progressBar"></div>
+        </div>
+        
+        <div id="volumeControl" class=" border-white">
+          
+          <div id="volumeBar" class="">
+            <div id="volumeLevel"></div>
+          </div>
+        
+          <button id="volumeUpBtn" class="hidden"><i class="fas fa-volume-up"></i></button>
+          <button id="volumeDownBtn" class="hidden"><i class="fas fa-volume-down"></i></button>
+        </div> 
+        
+      </section>
+      
+      <!-- <section> -->
+        
+        <button id="playBtn" class=" absolute right-2 border-white p-0 m-0 flex items-end ">
+          <ion-icon class="w-10 h-10 text-white " v-if="!isPlaying" name="play-circle-sharp"></ion-icon>
+          <ion-icon class="w-10 h-10 text-white " v-if="isPlaying" name="pause-circle-sharp"></ion-icon>
+        </button>
+        
+      <!-- </section> -->
+      
+    </section>
+  
+   </section>
     
-    
-      <button id="volumeUpBtn" class="hidden"><i class="fas fa-volume-up"></i></button>
-      <button id="volumeDownBtn" class="hidden"><i class="fas fa-volume-down"></i></button>
-    </div>
-    
-     <div id="duration" class="">
+   
+     <div id="duration" class="hidden">
       <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
     </div>
     
-    <p id="time-remaining"></p>
+    <p id="time-remaining" class="hidden"></p>
     
     <!-- </section> -->
 
+          
+
+    
   
     <audio  ref="myAudio" id="myAudio" controls class="hidden">
       <!-- <source :src="data.preview_url" type="audio/mpeg"> -->
@@ -223,8 +242,10 @@
 <style>
 
 #audioControls {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: max-content 1fr ;
+    justify-content: start;
     align-items: center;
     margin-top: 20px;
   }
@@ -246,10 +267,10 @@
 
   #progress {
     position: relative;
-    width: 100%;
-    height: 10px;
-    background-color: #ddd;
-    border-radius: 10px;
+    width: 90%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.575);
+    border-radius: 10px; 
   }
 
   #progressBar {
@@ -258,10 +279,10 @@
     left: 0;
     height: 100%;
     width: 0%;
-    background-color: red;
+    background-color: rgba(255, 255, 255, 0.966);
     border-radius: 10px;
   }
-  #progressBar::before{
+  /* #progressBar::before{
     content: "";
       position:absolute;
       right:0;
@@ -270,21 +291,21 @@
       height:15px;
       border-radius:25px;
       background:blue;
-  }
+  } */
 
   #volumeControl {
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    /* margin-left: 20px; */
   }
 
   #volumeBar {
     position: relative;
-    width: 80px;
-    height: 10px;
-    background-color: #ddd;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.575);
     border-radius: 10px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
   }
 
   #volumeLevel {
@@ -293,7 +314,7 @@
     left: 0;
     height: 100%;
     width: 50%;
-    background-color: #333;
+    background-color: white;
     border-radius: 10px;
   }
 

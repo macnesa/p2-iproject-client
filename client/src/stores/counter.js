@@ -120,25 +120,28 @@ export const useDataStore = defineStore('data', {
     
     
     async getTopArtists() {
-      // try {
-      //   const req = await
-      //     axios({
-      //       url: `${this.baseUrl}/topArtists`,
-      //       method: 'get',
-      //       headers: {
-      //         access_token: localStorage.getItem('token')
-      //       }
-      //     })
-      //   localStorage.setItem('topArtists', JSON.stringify(req.data))
-      //   this.topArtists = req.data
-      //   await this.getTopTracksByArtist(req.data.items[0].id)
-      //   console.log(req.data);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-      this.getTopTracksByArtist()
-      this.topArtists = JSON.parse(localStorage.getItem("topArtists")) 
-      console.log(this.topArtists, "topArtists");
+      try {
+        const req = await
+          axios({
+            url: `${this.baseUrl}/topArtists`,
+            method: 'get',
+            headers: {
+              access_token: localStorage.getItem('token')
+            }
+          })
+        localStorage.setItem('topArtists', JSON.stringify(req.data))
+        this.topArtists = req.data
+        await this.getTopTracksByArtist(req.data.items[0].id)
+        console.log(req.data);
+      } catch (error) {
+        console.log(error);
+      }
+      
+      
+      
+      // this.getTopTracksByArtist()
+      // this.topArtists = JSON.parse(localStorage.getItem("topArtists")) 
+      // console.log(this.topArtists, "topArtists");
     },
     
     async getTopTracksByArtist(artistId) {

@@ -35,8 +35,8 @@ export default {
 <template>
   <!-- <Header/> -->
   <Sidebar/>
-  <div class="p-4 sm:ml-64 bg-red-200 "> 
-    <div class="p-4 border-2 bg-yellow-800 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+  <div class="p-4 sm:ml-64 bg-green-400 "> 
+    <div class="p-4 border-2 dark:bg-gray-800 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
       <RouterView /> 
     </div>
   </div>

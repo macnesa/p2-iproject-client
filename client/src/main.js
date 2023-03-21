@@ -6,6 +6,7 @@ import App from "./App.vue";
 import router from "./router";
 
 import './index.css' 
+import './style/font-face.css' 
 
 
 const app = createApp(App);

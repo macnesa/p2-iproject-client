@@ -1,142 +1,177 @@
 
      
 <script>
-import { mapActions, mapState, mapWritableState } from "pinia";
-import { useDataStore } from "../stores/counter";
-import { RouterLink, RouterView } from "vue-router";
-import router from '../router'
-
-import ArtistCard from "../components/ArtistCard.vue"
-import MusicPlayer from "../components/MusicPlayer.vue";
-import MusicTable from "../components/Table.vue"
-import MusicCard from "../components/MusicCard.vue"
-
-export default {
-  components: {
-    ArtistCard,
-    MusicTable,
-    MusicCard,
-    MusicPlayer
-  },
-  data() {
-    return {
-      token: '',
-      search: '',
-      languages: [
-        {
-          no: "16",
-          name: "English",
-          native: "English",
-          code: "en",
-        }
-      ],
-      selectedLanguage: "en",
-      texts: [],
-      // texts: '',
-      iframeSrc: '',
-      isPaused: false,
-      spotifyId: 'spotify:episode:43cbJh4ccRD7lzM2730YK3',
-      player: null,
-      intervalId: null,
-      isPlaying: false,
-      musicPlayerData: null
-    };
-  },
-
-  async beforeMount() {
-
-  },
-
-  mounted() {
-    this.intervalId = setInterval(() => {
-      this.getCurrentPlaying()
-    }, 50000);
-
-    // var audio = document.getElementById("audio-preview");
-    // audio.play();
-
-     
-    
-  },
-
-  beforeDestroy() {
-    clearInterval(this.intervalId);
-  },
-
-  created() {
-    const token = localStorage.getItem('token')
-    if (token) {
-      this.token = token
-      // this.login(code)
-      this.getProfile()
-      this.getTopTracks()
-      this.getTopArtists() // iclude top tracks by top 1 artist
-      this.getRecentlyPlayed()
-      this.getTopGlobal()
-      this.getTopLocal()
-      this.getCurrentPlaying()
-    }
+  import { mapActions, mapState, mapWritableState } from "pinia";
+  import { useDataStore } from "../stores/counter";
+  import { RouterLink, RouterView } from "vue-router";
+  import router from '../router'
 
 
-  },
-  watch: {
 
-  },
-  
-  
-  computed: {
-    ...mapState(useDataStore, ["spotifyProfile", "spotifyTopTracks", 'topLocal', "recentlyPlayed", "topArtists", "topTracksByArtist", "currentlyPlaying", "tracksByTopOneSong", "searchList", "topGlobal"]),
-    // ...mapWritableState(useDataStore, ["access_token"]),
-  },
-  
-  
-  
-  methods: {
-    ...mapActions(useDataStore, ["login", "getProfile", "getTopLocal", "getTopTracks", "getTopArtists", "getTopTracksByArtist", "getRecentlyPlayed", "getCurrentPlaying", "searchSongs", "getTopGlobal", "snap", "getDownloadLink"]),
-    tes() {
+  // Import Swiper Vue.js components
+  import { EffectFade } from 'swiper';
+  import { Swiper, SwiperSlide } from 'swiper/vue';
+  // Import Swiper styles
+  import 'swiper/css';
+  import 'swiper/css/effect-fade'
+
+
+
+  import ArtistCard from "../components/ArtistCard.vue"
+  import MusicPlayer from "../components/MusicPlayer.vue";
+  import MusicTable from "../components/Table.vue"
+  import MusicCard from "../components/MusicCard.vue"
+
+  export default {
+    components: {
+      Swiper,
+      SwiperSlide,
+      
+      ArtistCard,
+      MusicTable,
+      MusicCard,
+      MusicPlayer
     },
-    msToTimeFormat(milliseconds) {
-      var minutes = Math.floor(milliseconds / (1000 * 60));
-      var seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-      return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    data() {
+      return {
+        token: '',
+        search: '',
+        languages: [
+          {
+            no: "16",
+            name: "English",
+            native: "English",
+            code: "en",
+          }
+        ],
+        selectedLanguage: "en",
+        texts: [],
+        // texts: '',
+        iframeSrc: '',
+        isPaused: false,
+        spotifyId: 'spotify:episode:43cbJh4ccRD7lzM2730YK3',
+        player: null,
+        intervalId: null,
+        isPlaying: false,
+        musicPlayerData: null
+      };
     },
-    playSong(id) {
-      this.iframeSrc = `https://open.spotify.com/embed/track/${id}?utm_source=generator`
-      // document.getElementById('spotify-iframe').contentWindow.postMessage('play', 'https://open.spotify.com');
+
+    async beforeMount() {
+
     },
-    async download(id) {
-      const link = await this.getDownloadLink(id)
-      window.location.href = "https://api.spotifydown.com/dl/Omer%20Adam%20-%20%D7%90%D7%A0%D7%99.mp3";
+
+    mounted() {
+      this.intervalId = setInterval(() => {
+        this.getCurrentPlaying()
+      }, 50000);
+
+      // var audio = document.getElementById("audio-preview");
+      // audio.play();
+
+      
+      
     },
-    join(arr) {
-      return arr.join(',')
+
+    beforeDestroy() {
+      clearInterval(this.intervalId);
     },
-    hitungPersentase(waktuBerlalu, totalWaktu) {
-      const persentase = (waktuBerlalu / totalWaktu) * 100;
-      return persentase.toFixed(2); // Pembulatan menjadi 2 digit desimal
-    },
-    
-    togglePlay(data) {
-      this.isPlaying = !this.isPlaying;
-      this.musicPlayerData = data;
-    },
-    
-    playMusic(data) {
-      this.musicPlayerData = data;
-      alert('NGENTOT', this.musicPlayerData);
-    },
-    
-    isPreviewAvailable(data) {
-      if(!data.preview_url) {
-        return "pointer-events-none" 
+
+    created() {
+      const token = localStorage.getItem('token')
+      if (token) {
+        this.token = token
+        // this.login(code)
+        this.getProfile()
+        this.getTopTracks()
+        this.getTopArtists() // iclude top tracks by top 1 artist
+        this.getRecentlyPlayed()
+        this.getTopGlobal()
+        this.getTopLocal()
+        this.getCurrentPlaying()
       }
-    }
+      
+      
+     
+
+
+    },
+    watch: {
+
+    },
     
-  },
-};
-
-
+    
+    computed: {
+      ...mapState(useDataStore, ["spotifyProfile", "spotifyTopTracks", 'topLocal', "recentlyPlayed", "topArtists", "topTracksByArtist", "currentlyPlaying", "tracksByTopOneSong", "searchList", "topGlobal"]),
+      // ...mapWritableState(useDataStore, ["access_token"]),
+    },
+    
+    
+    
+    methods: {
+      ...mapActions(useDataStore, ["login", "getProfile", "getTopLocal", "getTopTracks", "getTopArtists", "getTopTracksByArtist", "getRecentlyPlayed", "getCurrentPlaying", "searchSongs", "getTopGlobal", "snap", "getDownloadLink"]),
+      tes() {
+      },
+      msToTimeFormat(milliseconds) {
+        var minutes = Math.floor(milliseconds / (1000 * 60));
+        var seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+      },
+      playSong(id) {
+        this.iframeSrc = `https://open.spotify.com/embed/track/${id}?utm_source=generator`
+        // document.getElementById('spotify-iframe').contentWindow.postMessage('play', 'https://open.spotify.com');
+      },
+      async download(id) {
+        const link = await this.getDownloadLink(id)
+        window.location.href = "https://api.spotifydown.com/dl/Omer%20Adam%20-%20%D7%90%D7%A0%D7%99.mp3";
+      },
+      join(arr) {
+        return arr.join(',')
+      },
+      hitungPersentase(waktuBerlalu, totalWaktu) {
+        const persentase = (waktuBerlalu / totalWaktu) * 100;
+        return persentase.toFixed(2); // Pembulatan menjadi 2 digit desimal
+      },
+      
+      togglePlay(data) {
+        this.isPlaying = !this.isPlaying;
+        this.musicPlayerData = data;
+      },
+      
+      playMusic(data) {
+        this.musicPlayerData = data;
+        alert('NGENTOT', this.musicPlayerData);
+      },
+      
+      isPreviewAvailable(data) {
+        if(!data.preview_url) {
+          return "pointer-events-none" 
+        }
+      },
  
+    },
+    
+    
+          
+    setup() {
+        const onSwiper = (swiper) => {
+          console.log(swiper);
+        };
+        const onSlideChange = () => {
+          console.log('slide change');
+        };
+        return {
+          onSwiper,
+          onSlideChange,
+          EffectFade,
+        };
+      }
+    
+    
+  };
+
+
+  
 
  
 
@@ -157,12 +192,12 @@ export default {
 
       <MusicPlayer v-if="musicPlayerData" :data="musicPlayerData" />
      
- 
+      <!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3fVyiIB5BT5KjSqoRTeqce?utm_source=generator" width="600px" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
 
         <!-- TOP SONG --> 
-        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Song</p>
+        <p class="mt-5 mb-2 text-xl font-semibold text-gray-900 dark:text-white">Top Song</p>
         <!-- bg-white dark:bg-gray-900  max-w-screen-xl  -->
-        <section v-if="spotifyTopTracks.items?.length" class="grid h-[30rem] border-4 overflow-hidden border-blue-900 ">
+        <section v-if="spotifyTopTracks.items?.length" style="background-image: url(https://i.pinimg.com/originals/a8/76/d3/a876d3d1304c6b4b46648aceda8caa4a.gif);background-size: cover;" class="grid h-[30rem] rounded-2xl overflow-hidden  border-blue-900 ">
 
           <!-- h-[100%] w-[100%] -->
           <!-- <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1 ">
@@ -172,14 +207,14 @@ export default {
 
           <!-- album rotate container -->
           <div style="z-index:"
-            class=" h-[100%] w-[100%] overflow-hidden lg:mt-0 grid items-end justify-end border border-yellow-200 row-start-1 col-start-1">
+            class=" h-[100%] w-[100%] overflow-hidden lg:mt-0 grid items-end justify-end  border-yellow-200 row-start-1 col-start-1">
             <!--                                                             -->
-            <div style="transform: rotate(30deg) translate(170px, -60px); transform-origin: 0 0; "
-              class=" h-[600px] w-[600px] grid grid-flow-col border border-white overflow-hidden ">
+            <div style="transform: rotate(30deg) translate(170px, -60px); box-shadow: -15px 130px 65px -6px rgba(0,0,0,0.31); transform-origin: 0 0; "
+              class=" h-[600px] w-[600px] grid grid-flow-col  border-white overflow-hidden ">
 
               <!-- stack gimmick -->
-              <span class="block row-start-1 h-full mt-10 ml-5 col-start-1 w-5 bg-green-300"></span>
-              <span class="block row-start-1 h-full mt-20 col-start-1 w-5 bg-green-400"></span>
+              <span class="block row-start-1 h-full mt-10 ml-5 col-start-1 w-5 bg-[#11ad48]"></span>
+              <span style="" class="block row-start-1 h-full mt-20 col-start-1 w-5 bg-[#0e8036]"></span>
               <!-- album -->
               <img :src="spotifyTopTracks.items[0].album.images[0].url"
                 class=" row-start-1 col-start-1 ml-10 h-[100%] w-[100%] ">
@@ -191,27 +226,29 @@ export default {
 
           <!-- lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12   -->
           <section style="filter:brightness(1);z-index:"
-            class="grid px-4 py-1 w-[50%] h-full row-start-1 col-start-1 border border-red-600  ">
+            class="grid px-4 py-1 w-[50%] h-full row-start-1 col-start-1  border-red-600 justify-center items-center ">
 
-            <section class="m-auto place-self-center lg:col-span-7 border border-white ">
-              <h1
-                class=" mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-[8rem] dark:text-white">
-                {{ spotifyTopTracks.items[0].name }}</h1>
+            <section class="  lg:col-span-7  border-white ">
+              <p
+                class=" font-sans  mb-4 text-4xl font-bold tracking-tight leading-none md:text-5xl xl:text-[8rem] dark:text-white">
+                {{ spotifyTopTracks.items[0].name }}</p>
                 
               <div class="flex items-center">  
                 
-                <div class=" w-[max-content]  flex justify-center items-center" @click="togglePlay(spotifyTopTracks.items[0])">
-                  <!-- <div class="play" v-if="!isPlaying"></div>  -->
-                  <!-- <div class="pause" v-if="isPlaying"></div> -->
+                <!-- <div class=" w-[max-content]  flex justify-center items-center" @click="togglePlay(spotifyTopTracks.items[0])">
                   <ion-icon class="w-20 h-20 text-green-400 " v-if="!isPlaying" name="play-circle-sharp"></ion-icon>
                   <ion-icon class="w-20 h-20 text-green-400 " v-if="isPlaying" name="pause-circle-sharp"></ion-icon>
-                </div>
+                </div> -->
                 
                 <img class="w-6 h-6 rounded-full" src="https://i.scdn.co/image/ab6761610000e5ebb283c3a97aea1c06e2cf1a2c" alt="Rounded avatar">
-                <p class="max-w-2xl ml-1 font-semibold text-gray-500   md:text-base lg:text-base  dark:text-white">
+                
+                <p class=" font-sans text-sm max-w-2xl ml-1 font-semibold text-gray-500   dark:text-white"> 
+                {{ spotifyTopTracks.items[0].artists.map(each => each.name ).join(", ") }}  </p> 
                  
-                {{ spotifyTopTracks.items[0].artists[0].name }} * {{ new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() }} * {{ spotifyTopTracks.items[0].album.name }} </p> 
+                <!-- <p class=" font-sans max-w-2xl ml-1 font-semibold text-gray-500   md:text-base lg:text-base  dark:text-white"> 
+                * {{ new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() }} * {{ spotifyTopTracks.items[0].album.name }} </p>  -->
                  
+                
               </div>
                
 
@@ -255,7 +292,7 @@ export default {
 
 
         <!-- TOP ARTIST --> 
-        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Artist</p>
+        <p class="mt-5 mb-2 text-xl font-semibold text-gray-900 dark:text-white">Top Artist</p>
         <div v-if="topArtists.items?.length"
           class=" h-auto min-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid">
 
@@ -266,9 +303,10 @@ export default {
 
           <!-- rounded-[50px] grid-flow-col grid-cols-[max-content_1fr]  -->
           <div style="filter:brightness(1);  "
-            class=" p-5 m-12 text-[100%] grid items-center border border-red-400 bg-white   ">
+            class=" p-5 m-12 text-[100%] grid items-center border border-red-400   ">
             <!--  -->
             <!-- <img :src="topArtists.items[0].images[1].url" class="  rounded-[250px]  h-[100%] border border-black "> -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" class="h-10 absolute right-0 top-0 w-10 border border-black ">
 
             <!--  pl-16 -->
             <div class=" text-gray-800 w-full  grid items-center  border border-black ">
@@ -276,13 +314,13 @@ export default {
               <!-- text-[6rem] {{ topArtists.items[0].name }} -->
               <!-- <p class=" self-end text-[5rem] font-bold ">Eden Ben Zaken</p> -->
 
-              <p class=" max-w-[100%] text-[500%] text-center font-bold   bg-clip-text text-transparent bg-center bg-no-repeat bg-cover border border-black "
+              <p class="top_arist max-w-[100%] text-[500%] text-center font-bold   bg-clip-text text-transparent bg-center bg-no-repeat bg-cover border border-black "
               :style="'background-image: url(' + topArtists.items[0].images[1].url + ')'">
                 {{ topArtists.items[0].name }}
-              </p>
+              </p>  
 
               <!-- <div class="self-start"> -->
-                <p class="font-bold border border-black "> {{ topArtists.items[0].genres.map(str => str.toLocaleUpperCase('title')).join(" - ")
+                <p  class="font-bold top_arist border border-black text-center  "> {{ topArtists.items[0].genres.map(str => str.toLocaleUpperCase('title')).join(" - ")
                 }}</p>
               </div>
               
@@ -322,23 +360,23 @@ export default {
         <!-- TRACKS BY TOP ARTIST -->
         <!-- v-for="each in topTracksByArtist.tracks" -->
       <!-- <p class="mt-5 mb-5 text-2xl font-bold text-gray-900 dark:text-white">Based from top one artist</p>  -->
-      <section v-if="topArtists.items?.length && topTracksByArtist.tracks?.length" style="background: linear-gradient(0deg, rgba(24,23,41,1) 1%, rgba(43,30,47,1) 27%, rgba(72,42,83,1) 59%, rgba(133,99,144,1) 100%);"  class=" h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
+      <section v-if="topArtists.items?.length && topTracksByArtist.tracks?.length" style="background:#008fb9;"  class=" h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
         
-        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-red-200 || grid grid-flow-col grid-cols-[max-content_1fr]  ">
+        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl   border-red-200 || grid grid-flow-col grid-cols-[max-content_1fr]  ">
         
-          <div class="border-4 border-l-blue-200 grid justify-center items-end ">
-            <img :src="topArtists.items[0].images[1].url" class="w-[20rem] h-[20rem]" alt="">   
+          <div class=" border-2 border-l-blue-200 grid justify-center items-end ">
+            <img style="box-shadow: -1px -1px 30px -9px rgba(0,0,0,1) " :src="topArtists.items[0].images[1].url" class="w-[20rem] h-[20rem]" alt="">   
           </div>
           
-          <div class="border border-l-fuchsia-600 flex flex-col justify-end px-4 ">
+          <div class=" border-2 border-l-fuchsia-600 flex flex-col justify-end px-4 ">
              
-            <p class="text-base font-semibold text-gray-900 dark:text-white">THIS IS</p>
+            <p class="text-base  font-bold text-gray-900 dark:text-white">THIS IS</p>
               
-            <p class="text-6xl font-extrabold text-gray-900 dark:text-white"> {{ topArtists.items[0].name }}   </p>
+            <p class="text-8xl mb-4 font-sans font-bold text-gray-900 dark:text-white"> {{ topArtists.items[0].name }}   </p>
              
-            <p class="text-base font-semibold text-gray-900 dark:text-white">The most popular songs by {{ topArtists.items[0].name }}, the artist you listen to the most.</p>
+            <p class="text-sm mb-2 font-sans font-semibold text-gray-900 dark:text-unfocus-500">The most popular songs by {{ topArtists.items[0].name }}, the artist you listen to the most.</p>
   
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ topTracksByArtist.tracks.length }} Songs</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white flex items-center "> <img class="w-6 h-6 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" />   {{ topTracksByArtist.tracks.length }} Songs</p>
             
           </div>
           
@@ -349,9 +387,9 @@ export default {
         
         
         <!-- SONGS BY TOP 1 ARTIST -->
-        <div v-if="topTracksByArtist?.tracks?.length" style="background-color: rgba(0, 0, 0, 0.33);" class="relative overflow-x-auto  ">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class=" border-b border-gray-800 text-gray-700 dark:text-gray-400">
+        <div v-if="topTracksByArtist?.tracks?.length" style="background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(14,13,13,1) 33%, rgba(31,30,30,0.9) 70%, rgba(35,34,34,0.7) 85%, rgba(41,41,41,0.3) 100%)" class="relative overflow-x-auto px-4 ">
+            <table class="w-full text-sm text-left  border-white text-gray-500 dark:text-unfocus-500">
+              <thead class=" border-b border-[rgba(222,222,222,0.1)] text-gray-700 dark:text-gray-400">
                     <tr >
                         <th scope="col" class="px-3 py-3 w-5 text-end font-semibold ">
                             #
@@ -371,22 +409,22 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="each, index in topTracksByArtist.tracks"  @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white`  ">
+                    <tr  v-for="each, index in topTracksByArtist.tracks"  @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-none cursor-pointer dark:focus:bg-gray-800 font-sans border border-white rounded-xl dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white`  ">
                       <!-- <button> -->
-                        <th scope="row" class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
+                        <th style="border-top-left-radius:10px; border-bottom-left-radius:10px ;" scope="row" class="px-3 py-3 text-end font-semibold  border-white whitespace-nowrap">
                             {{ ++index }}
                         </th>
                         <td class="pr-6 py-2 flex  border-white ">
-                          <img :src="each.album.images[1].url" width="50" height="50" alt="">
+                          <img :src="each.album.images[1].url" width="40" height="40" class="rounded-sm" alt="">
                           <div class="ml-2 p-0  flex flex-col justify-center " >
-                            <p class="font-semibold text-[1rem] flex dark:text-white  border-red-300 " >{{ each.name }}</p>
-                            <p class="font-semibold text-sm border-red-300" >{{ each.artists[0].name }}</p>
+                            <p class="font-semibold font-sans text-sm flex dark:text-white  border-red-300 " >{{ each.name }}</p>
+                            <p class="font-semibold font-sans text-sm border-red-300" >{{ each.artists[0].name }}</p>
                           </div>
                         </td>
-                        <td class="px-6 py-2 font-semibold">
+                        <td class="px-6 py-2 text-sm font-semibold font-sans">
                           {{ each.album.name }}
                         </td>
-                        <td class="px-6 py-2 font-semibold">
+                        <td style="border-top-right-radius:10px; border-bottom-right-radius:10px ;"  class="px-6 py-2 text-sm font-semibold  border-white ">
                             {{ msToTimeFormat(each.duration_ms) }}
                         </td>
                         <!-- <td>
@@ -514,45 +552,99 @@ export default {
       
       
        
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-       <!-- TOP ARTIST --> 
+       
+        
+        
+        <!-- TOP ARTIST --> 
        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Artist</p>
+       
         <section v-if="topArtists.items?.length"
           class="  h-[20rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center">
           
-          <section style="filter:brightness(1);  "
-            class="     text-[100%] grid  grid-flow-col border-4 border-red-400    ">
+          
+        <swiper  :slides-per-view="'auto'" class=" h-[100%] w-full border-4 border-blue-400 ">
+          
+        <swiper-slide v-for="each, index in topArtists.items" :key="index"  class="  w-[max-content] border border-red-400  | grid items-center ">
+          
+            <div class="border bg-black border-white text-center ">
+              <img class="w-36 h-36 rounded-full" :src="each.images[0].url" alt="Large avatar">
+              <p class="text-xs mt-2 font-semibold text-gray-900 dark:text-white">{{ each.name }}</p>
+            </div>  
             
-            <div v-for="each, index in topArtists.items" :key="index" class="border border-white w-32 text-center ">
-              <img class="w-full h-32 rounded-full" :src="each.images[0].url" alt="Large avatar">
-              <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ each.name }}</p>
-            </div>
-             
-            
-          </section>
-
+        </swiper-slide>
+          
+        </swiper>   
         </section>
         <section v-else>
           <p>No data is currently available</p>
         </section>
         <!-- END TOP ARTISTS -->
+        
+        
+      
+        <div class="pt-[40px] w-[100%] h-[100vh] box-border  ">
+
+      <swiper :slides-per-view="1" :space-between="1" @swiper="onSwiper" @slideChange="onSlideChange"
+        :modules="[EffectFade]" effect="fade" class=" h-[100%] ">
+
+        <swiper-slide class=" | grid">
+          <img
+            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            class=" w-[100%] row-start-1 col-start-1  ">
+          <div class=" pt-14 pl-14 row-start-1 col-start-1">
+            <p class="font-bold text-white"> <span class="text-6xl">macMovie</span> <br> <span>Explore your own
+                desires.</span></p>
+          </div>
+        </swiper-slide> 
+        <swiper-slide class=" | grid">
+          <img
+            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            class=" w-[100%] row-start-1 col-start-1  ">
+          <div class=" pt-14 pl-14 row-start-1 col-start-1">
+            <p class="font-bold text-white"> <span class="text-6xl">macMovie</span> <br> <span>Explore your own
+                musuhashem.</span></p>
+          </div>
+        </swiper-slide> 
+
+      </swiper>
+      </div>
       
       
       
       
       
-      
-      
+        <!-- TOP COUNTRY BASED --> 
+        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Based on your country</p>
+        <section v-if="topLocal.tracks?.items?.length"
+          class=" w-full box-border overflow-hidden p-4 shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3  ">
+          
+          
+        <button v-for="each, index in topLocal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer  font-sans  border-[rgba(222,222,222,0.1)] rounded-xl border-t  dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white dark:text-unfocus-500 mx-2 dark:focus:bg-[rgba(222,222,222,0.3)] cursor-pointer  `">
+        <!-- <button> -->
+          
+          <section class="px-3 py-2 flex   border-white ">
+            <img :src="each.track.album.images[1].url" class="rounded-sm" width="40" height="40" alt="">
+            
+            <div class="ml-2 p-0  flex flex-col text-start  border-white justify-center truncate " >
+              <p class="font-semibold font-sans text-xs flex dark:text-white  border-red-300 " >{{ each.track.name }}</p>
+              <!-- * {{ each.track.album.name }} * {{new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() -->
+              <p class="font-normal font-sans text-xs border-red-300" >{{ each.track.artists[0].name }}</p>
+            </div>
+          </section>
+          <!-- <td class="px-6 py-2 font-semibold">
+              {{ each.album.name }}
+            </td>
+            <td class="px-6 py-2 font-semibold">
+                {{ msToTimeFormat(each.duration_ms) }}
+            </td>  -->
+          </button>
+        
+         
+        </section>
+        <section v-else>
+          <p>No data is currently available</p>
+        </section>
+        <!-- END COUNTRY BASED -->
       
       
       
@@ -561,97 +653,53 @@ export default {
         
        <!-- TOP GLOBAL --> 
        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top global</p>
+         
         <section v-if="topGlobal.tracks?.items?.length"
-          class=" w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3 ">
+          class=" w-full box-border overflow-hidden p-4 shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3  ">
           
           
-        <tr v-for="each, index in topGlobal.tracks.items" @dblclick="playMusic(each.track)" :class=" `teer ${isPreviewAvailable(each.track)} dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white` ">
+        <button v-for="each, index in topGlobal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer  font-sans  border-[rgba(222,222,222,0.1)] rounded-xl border-t  dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white dark:text-unfocus-500 mx-2 dark:focus:bg-[rgba(222,222,222,0.3)] cursor-pointer  `">
         <!-- <button> -->
           
-          <td class="pr-6 py-2 flex  border-white ">
-            <img :src="each.track.album.images[1].url" width="50" height="50" alt="">
-            <div class="ml-2 p-0  flex flex-col justify-center truncate " >
-              <p class="font-semibold text-[1rem] flex  dark:text-white  border-red-300 " >{{ each.track.name }}</p>
+          <section class="px-3 py-2 flex   border-white ">
+            <img :src="each.track.album.images[1].url" class="rounded-sm" width="40" height="40" alt="">
+            
+            <div class="ml-2 p-0  flex flex-col text-start  border-white justify-center truncate " >
+              <p class="font-semibold font-sans text-xs flex dark:text-white  border-red-300 " >{{ each.track.name }}</p>
               <!-- * {{ each.track.album.name }} * {{new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() -->
-              <p class="font-semibold text-sm  border-red-300" >{{ each.track.artists[0].name }}</p>
+              <p class="font-normal font-sans text-xs border-red-300" >{{ each.track.artists[0].name }}</p>
             </div>
-          </td>
+          </section>
           <!-- <td class="px-6 py-2 font-semibold">
               {{ each.album.name }}
             </td>
             <td class="px-6 py-2 font-semibold">
                 {{ msToTimeFormat(each.duration_ms) }}
             </td>  -->
-        </tr>
-          
-          
-
+          </button>
+        
+         
         </section>
+        <section v-else>
+          <p>No data is currently available</p>
+        </section>
+        
+        
         <section v-else>
           <p>No data is currently available</p>
         </section>
         <!-- END TOP GLOBAL -->
         
         
-        
-        
-        
-        
-        
-        
-        
-         <!-- TOP COUNTRY BASED --> 
-       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Based from your country</p>
-        <section v-if="topLocal.tracks?.items?.length"
-          class=" w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3 ">
-          
-          
-        <tr v-for="each, index in topLocal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white `">
-        <!-- <button> -->
-          
-          <td class="pr-6 py-2 flex  border-white ">
-            <img :src="each.track.album.images[1].url" width="50" height="50" alt="">
-            <div class="ml-2 p-0  flex flex-col justify-center truncate " >
-              <p class="font-semibold text-[1rem] flex  dark:text-white  border-red-300 " >{{ each.track.name }}</p>
-              <!-- * {{ each.track.album.name }} * {{new Date(spotifyTopTracks.items[0].album.release_date).getFullYear() -->
-              <p class="font-semibold text-sm  border-red-300" >{{ each.track.artists[0].name }}</p>
-            </div>
-          </td>
-          <!-- <td class="px-6 py-2 font-semibold">
-              {{ each.album.name }}
-            </td>
-            <td class="px-6 py-2 font-semibold">
-                {{ msToTimeFormat(each.duration_ms) }}
-            </td>  -->
-        </tr>
-          
-          
-
-        </section>
-        <section v-else>
-          <p>No data is currently available</p>
-        </section>
-        <!-- END COUNTRY BASED -->
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+     
+    
         
         
         
          
 
 
-      <p class="text-white">my code: {{ token }}</p>
+      <!-- <p class="text-white">my code: {{ token }}</p> -->
 
 
  
@@ -735,6 +783,196 @@ export default {
   .pause:after {
     margin-left: 4px;
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+@-webkit-keyframes slidein {
+from {background-position: top; background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+}
+
+@keyframes slidein {
+from {background-position: top;background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+
+}  
+ .top_arist{
+ background-image: url('https://i.scdn.co/image/ab67616d00001e02cd0806a7ba54ce376fa438ac');
+  background-size:cover;     
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    -webkit-animation: slidein 100s;
+        animation: slidein 100s ; 
+
+        -webkit-animation-fill-mode: linear;
+        animation-fill-mode: linear;
+
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+
+        -webkit-animation-direction: linear;
+        animation-direction: linear;  
+}
+  
+  
+
+
+
+
+.container {
+	background:#1F2024;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	position: relative;
+}
+
+.blob-c {
+	min-height: 100vh;
+	overflow: hidden;
+	position:absolute;
+	width: 100%;
+	filter: blur(40px);
+/*   background: rgba(255,255,255,0.1) */
+}
+
+.shape-blob {
+	background:#26C3F9;
+	height: 60px;
+	width: 80px;
+	border-radius: 40% 50% 30% 40%;
+  	animation: 
+		transform 18s ease-in-out infinite both alternate,
+		movement_one 12s ease-in-out infinite both;
+	opacity:.7;
+	position: absolute;
+	left: 75%;
+	top: 40%;
+}
+.shape-blob.one{
+	background:#0085FF;
+	height: 150px;
+	width: 200px;
+	left: 10px;
+	top: 10px;
+	transform: rotate(-180deg);
+	animation: transform 8s ease-in-out infinite both alternate, movement_two 20s ease-in-out infinite both;
+}
+
+.shape-blob.six{
+	background:#0EAFFF;
+	height: 70px;
+	width: 100px;
+	left: 160px;
+	top: 200px;
+	transform: rotate(-180deg);
+	animation: transform 5s ease-in-out infinite both alternate, movement_two 5s ease-in-out infinite both;
+}
+
+.shape-blob.four{
+	background:#4EAEFF;
+	height: 100px;
+	width: 80px;
+	left: 350px;
+	top: 60px;
+	transform: rotate(-180deg);
+	animation: transform 17s ease-in-out infinite both alternate, movement_two 13s ease-in-out infinite both;
+}
+
+.shape-blob.five{
+	background:#0085FF;
+	height: 100px;
+	width: 80px;
+	left: 480px;
+	top: 30px;
+	transform: rotate(-180deg);
+	animation: transform 12s ease-in-out infinite both alternate, movement_two 18s ease-in-out infinite both;
+}
+
+.shape-blob.two{
+	background:#4EAEFF;
+	height: 150px;
+	width: 150px;
+	left: 600px;
+	top: 150px;
+	transform: rotate(-180deg);
+	animation: transform 10s ease-in-out infinite both alternate, movement_two 10s ease-in-out infinite both;
+}
+
+.shape-blob.three{
+	background:#0EAFFF;
+	height: 150px;
+	width: 150px;
+	left: 800px;
+	top: 30px;
+	transform: rotate(-180deg);
+	animation: transform 7s ease-in-out infinite both alternate, movement_two 23s ease-in-out infinite both;
+}
+
+@keyframes transform
+{
+    0%,
+  100% { border-radius: 33% 67% 70% 30% / 30% 40% 70% 70%; } 
+   20% { border-radius: 37% 63% 51% 49% / 37% 35% 35% 63%; } 
+   40% { border-radius: 36% 64% 64% 36% / 64% 48% 52% 26%; } 
+   60% { border-radius: 37% 63% 51% 49% / 30% 30% 70% 73%; } 
+   80% { border-radius: 40% 60% 42% 58% / 51% 51% 49% 59%; } 
+}
+
+
+@keyframes movement_one
+{
+    0%,
+  100% { transform: none; }
+   50% { transform: translate(50%, 20%) rotateY(10deg) scale(1); }
+}
+
+@keyframes movement_two
+{
+    0%,
+  500% { transform: none; }
+   50% { transform: translate(50%, 20%) rotate(-200deg) scale(1.3);}
+}
+
+h1 {
+	font-family: 'Playfair Display', serif;
+	font-size: 5em;
+	letter-spacing: 2px;
+	font-weight: 900;
+	color: white;
+	line-height: .9em;
+	position: absolute;
+	z-index: 4;
+	text-shadow: 2px 3px 15px rgba(0,0,0,.15);
+}
+
+
+
+
+
+  
 </style>
 
 

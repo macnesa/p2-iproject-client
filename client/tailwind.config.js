@@ -22,15 +22,25 @@ module.exports = {
           800: "#1e40af",
           900: "#1e3a8a",
         },
+        gray: {
+          700: "#0f0f0f",
+          800: "#0f0f0f",
+          900: "#0f0f0f",
+        },
+        unfocus: {
+          500: "#b3b3b3"
+        }
       },
       fontFamily: {
         // 'poppins': ['"Poppins"', 'sans serif'],
         raleway: ['"Raleway"', "sans serif"],
+        hebrew: ["Noto Sans Hebrew", "sans-serif"]
       },
     },
 
     fontFamily: {
       body: [
+        // "Gotham",
         "Inter",
         "ui-sans-serif",
         "system-ui",
@@ -48,21 +58,22 @@ module.exports = {
         "Noto Color Emoji",
       ],
       sans: [
-        "Inter",
-        "ui-sans-serif",
-        "system-ui",
-        "-apple-system",
-        "system-ui",
+        // "Inter",
+        // "ui-sans-serif",
+        // "system-ui",
+        // "-apple-system",
+        // "system-ui",
+        "Gotham",
         "Segoe UI",
-        "Roboto",
-        "Helvetica Neue",
-        "Arial",
-        "Noto Sans",
-        "sans-serif",
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Segoe UI Symbol",
-        "Noto Color Emoji",
+        // "Roboto",
+        // "Helvetica Neue",
+        // "Arial",
+        // "Noto Sans",
+        // "sans-serif",
+        // "Apple Color Emoji",
+        // "Segoe UI Emoji",
+        // "Segoe UI Symbol",
+        // "Noto Color Emoji",
       ],
     },
   },

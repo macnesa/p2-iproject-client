@@ -497,3 +497,105 @@ export default {
 
 
  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <style>
+
+
+
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
+ 
+
+@-webkit-keyframes slidein {
+from {background-position: top; background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+}
+
+@keyframes slidein {
+from {background-position: top;background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+
+}  
+ h1{
+ background-image: url('https://static.pexels.com/photos/414171/pexels-photo-414171.jpeg');
+  background-size:cover;
+  text-align:center;
+  font-weight:bold;
+  font-size:100px;
+  color:white;
+  font-family: 'Source Code Pro', monospace;
+  text-transform:uppercase;
+   background-size: cover;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    -webkit-animation: slidein 100s;
+        animation: slidein 100s ; 
+
+        -webkit-animation-fill-mode: linear;
+        animation-fill-mode: linear;
+
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+
+        -webkit-animation-direction: linear;
+        animation-direction: linear;  
+}
+
+</style>
+ 
+ <h1>
+   Background Animation
+   </h1> 

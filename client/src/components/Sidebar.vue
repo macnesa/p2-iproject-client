@@ -69,40 +69,38 @@
           <a href="#"
             class="flex border border-white items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white">       
             <img src="../assets/images/pngegg.png" class="w-10 h-10" /> 
-            <p class="ml-1 font-sm text-2xl ">Insight</p>
+            <p style="letter-spacing: -1px;" class="ml-1 text-xl ">Spotify</p>
+            <p style="letter-spacing: -1px; font-weight: bold;" class="ml-1 text-xl ">Insight</p>
           </a>
         </li>
         
         <RouterLink to="/"> 
         <li>
           <a href=""
-            class="flex mt-10 items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            class="flex mt-10 items-center p-2 text-sm transition duration-75 font-semibold text-gray-900 rounded-lg dark:text-unfocus-500  dark:hover:text-white">
             <ion-icon aria-hidden="true"
-              class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" name="home-sharp"></ion-icon>
+              class="w-6 h-6 " name="home-outline"></ion-icon>
             <span class="ml-3">Home</span>
           </a>
         </li> 
       </RouterLink>
-      <RouterLink to="/search">
+      <RouterLink to="/search"> 
         <li>
-          <div  
-            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+          <a href=""
+            class="flex items-center p-2 text-sm transition duration-75 font-semibold text-gray-900 rounded-lg dark:text-unfocus-500  dark:hover:text-white">
             <ion-icon aria-hidden="true"
-              class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" name="search-outline"></ion-icon>
-            <span class="flex-1 ml-3 whitespace-nowrap">Seacrh</span>
-            <span
-              class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
-          </div>
-        </li>
-      </RouterLink>
+              class="w-6 h-6 " name="search-outline"></ion-icon>
+            <span class="ml-3">Search</span>
+          </a>
+        </li> 
+      </RouterLink> 
+      
         <li>
           <a href="#"
-            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+            class="flex items-center p-2 text-sm transition duration-75 font-semibold text-gray-900 rounded-lg dark:text-unfocus-500  dark:hover:text-white">
             <ion-icon aria-hidden="true"
-              class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" name="sparkles-sharp"></ion-icon>
-            <span class="flex-1 ml-3 whitespace-nowrap">Spotify Library</span>
-            <span
-              class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+              class="w-6 h-6 " name="sparkles-sharp"></ion-icon>
+            <span class="ml-3"> Spotify Library </span>
           </a>
         </li>
 
@@ -110,43 +108,54 @@
       <RouterLink to="/auth">
         
         
-      <section id="dropdown-cta" class="p-4 mt-6  bg-blue-50 dark:bg-gray-900" role="alert">
-         
-        <p class="text-xs text-gray-900 dark:text-white text-center font-bold">LISTENING TO SPOTIFY</p>
         
         
-        <div class="mt-2 border border-black" v-if="Object.keys(currentlyPlaying).length">
-          <img :src="currentlyPlaying.item.album.images[0].url" alt="">
+      <section id="dropdown-cta" class=" absolute bottom-2 right-2 mt-6 dark:bg-gray-900  border border-white " role="alert">
+         
+        <!-- <p class="text-xs text-gray-900 dark:text-white text-center font-bold">LISTENING TO SPOTIFY</p> -->
+        
+        
+        <section class="mt-2 border border-black" v-if="Object.keys(currentlyPlaying).length">
+          <img style="filter: contrast(1.1) brightness(0.9);" :src="currentlyPlaying.item.album.images[0].url" class="border  " alt="">
           
-          <!-- ({{ currentlyPlaying.item.id }}) - On {{ currentlyPlaying.item.album.name }}  -->
-          <p class="text-white font-bold mt-2"> {{ currentlyPlaying.item.name }}  </p>
+          
+          <section class="py-2 px-4  border-white bg-black ">
+            <!-- ({{ currentlyPlaying.item.id }}) - On {{ currentlyPlaying.item.album.name }}  -->
+            <p class="text-white font-sans text-sm font-semibold mt-2"> {{ currentlyPlaying.item.name }}  </p>
 
           
-          <p class="text-white text-xs"> {{ currentlyPlaying.item.artists[0].name }} </p>
-          <!-- <p v-for="each in currentlyPlaying.item.artists" class="text-white"> {{ each.name }} </p> -->
+            <p class="text-unfocus-500 font-sans  text-xs "> {{ currentlyPlaying.item.artists[0].name }} </p>
+            <!-- <p v-for="each in currentlyPlaying.item.artists" class="text-white"> {{ each.name }} </p> -->
           
           
-          <div class="w-full mt-4 bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-            <div class="bg-white h-1.5 rounded-full" :style="{ width: `${hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms)}%` }" ></div>
-          </div>
+            <div class="w-full mt-2 bg-gray-200 rounded-full h-1 dark:bg-gray-700">
+              <div class="bg-white h-1 rounded-full" :style="{ width: `${hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms)}%` }" ></div>
+            </div>
 
-          <div class="flex justify-between">
-            <p class="text-white text-xs border-white"> {{ msToTimeFormat(currentlyPlaying.progress_ms) }} </p>
-            <p class="text-white text-xs border-white"> {{ msToTimeFormat(currentlyPlaying.item.duration_ms) }} </p>
-          </div>
+            <div class="flex justify-between mt-1">
+              <p class="text-unfocus-500 text-xs border-white"> {{ msToTimeFormat(currentlyPlaying.progress_ms) }} </p>
+              <p class="text-unfocus-500 text-xs border-white"> {{ msToTimeFormat(currentlyPlaying.item.duration_ms) }} </p>
+            </div>
          
 
-          <!-- <p  class="text-white"> {{ hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms) }} </p> -->
+            <!-- <p  class="text-white"> {{ hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms) }} </p> -->
 
           
-          <!-- <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>   -->
-        </div>
+            <!-- <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>   -->
+          </section>
+          
+          
+        </section>
         <div v-else>
           <p>No data is currently available</p>
         </div>
         
           
       </section>
+      
+      
+      
+      
       
       
     </RouterLink>
