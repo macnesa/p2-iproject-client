@@ -64,7 +64,7 @@ export const useDataStore = defineStore('data', {
             }
           })
         this.spotifyProfile = req.data
-        console.log(req.data);
+        console.log(req.data, "PROFILE");
       } catch (error) {
         console.log(error);
       }
@@ -145,24 +145,27 @@ export const useDataStore = defineStore('data', {
     },
     
     async getTopTracksByArtist(artistId) {
-      // try {
-      //   const req = await
-      //     axios({
-      //       url: `${this.baseUrl}/topTracksByArtist/?artistId=${artistId}`,
-      //       method: 'get',
-      //       headers: {
-      //         access_token: localStorage.getItem('token')
-      //       }
-      //     })
+      try {
+        const req = await
+          axios({
+            url: `${this.baseUrl}/topTracksByArtist/?artistId=${artistId}`,
+            method: 'get',
+            headers: {
+              access_token: localStorage.getItem('token')
+            }
+          })
           
-      //   localStorage.setItem("topTracksByArtist", JSON.stringify(req.data))    
-      //   this.topTracksByArtist = req.data
-      //   console.log(req.data, "LASHEM SHAAAMAYIM");
-      // } catch (error) {
-      //   console.log(error);
-      // }
-      this.topTracksByArtist = JSON.parse(localStorage.getItem("topTracksByArtist"))
-      console.log(this.topTracksByArtist, "getTopTracksByArtist");
+        localStorage.setItem("topTracksByArtist", JSON.stringify(req.data))    
+        this.topTracksByArtist = req.data
+        console.log(req.data, "LASHEM SHAAAMAYIM");
+      } catch (error) {
+        console.log(error);
+      }
+      
+      
+      
+      // this.topTracksByArtist = JSON.parse(localStorage.getItem("topTracksByArtist"))
+      // console.log(this.topTracksByArtist, "getTopTracksByArtist");
     },
 
     async getRecentlyPlayed() {

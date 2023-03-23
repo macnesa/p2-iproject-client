@@ -5,6 +5,11 @@
   import { useDataStore } from "../stores/counter";
   import { RouterLink, RouterView } from "vue-router";
   import router from '../router'
+  
+  
+  import { Collapse } from 'flowbite';
+
+  import ColorThief from "colorthief"
 
 
 
@@ -53,19 +58,43 @@
         player: null,
         intervalId: null,
         isPlaying: false,
-        musicPlayerData: null
+        musicPlayerData: null,
+        arrOfColor: null,
+        topArtistColor:null
       };
     },
 
     async beforeMount() {
 
     },
+    
+    
 
-    mounted() {
-      this.intervalId = setInterval(() => {
-        this.getCurrentPlaying()
-      }, 50000);
+    mounted() { 
 
+      
+      
+      // const body = document.body,
+      // jsScroll = document.getElementById('conta'),
+      // height = jsScroll.getBoundingClientRect().height - 1,
+      // speed = 1
+
+      //   var offset = 0
+
+      //   body.style.height = Math.floor(height) + "px"
+
+      //   function smoothScroll() {
+      //       offset += (window.pageYOffset - offset) * speed
+            
+      //       var scroll = "translateY(-" + offset + "px) translateZ(0)"
+      //       jsScroll.style.transform = scroll
+            
+      //      requestAnimationFrame(smoothScroll)
+      //   }
+      //   smoothScroll()
+      
+      
+      
       // var audio = document.getElementById("audio-preview");
       // audio.play();
 
@@ -90,14 +119,50 @@
         this.getTopLocal()
         this.getCurrentPlaying()
       }
-      
-      
-     
+       
+        const imageURL = 'https://i.scdn.co/image/ab67616d00001e02f6d6d1005e2dbe28c312fe2f';
+        const googleProxyURL = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
+ 
+        const colorThief = new ColorThief();
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = googleProxyURL + encodeURIComponent(imageURL);
+ 
+        const vm = this; // Bind "this" to Vue instance
+        img.addEventListener('load', function () {
+          const newPalette = colorThief.getColor(img);
+          vm.arrOfColor = newPalette; // Use "vm" instead of "this"
+           console.log(vm.arrOfColor, "YALOMA YALOMA YALOMALOMALOMA"); 
+        });
+         
 
+        
+       
+
+        
+        
 
     },
     watch: {
-
+      topArtists(newVal) {
+        
+        const imageURL = newVal.items[0].images[1].url;
+        const googleProxyURL = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
+ 
+        const colorThief = new ColorThief();
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = googleProxyURL + encodeURIComponent(imageURL);
+ 
+        const vm = this;  
+        img.addEventListener('load', function () {
+          const newPalette = colorThief.getColor(img);
+          vm.topArtistColor = newPalette;  
+           console.log(vm.topArtistColor, "MASUAKKKK"); 
+        });
+        
+        // console.log('MASUAKKKKKKKKK', newVal);
+      }
     },
     
     
@@ -140,7 +205,7 @@
       
       playMusic(data) {
         this.musicPlayerData = data;
-        alert('NGENTOT', this.musicPlayerData);
+        // alert('NGENTOT', this.musicPlayerData);
       },
       
       isPreviewAvailable(data) {
@@ -148,7 +213,25 @@
           return "pointer-events-none" 
         }
       },
+      
+       getTopThree(data) {
+        let result = [];
+        for (let i = 0; i < data.length && result.length < 3; i++) {
+          const artistName = data[i].artists[0].name;
+          if (result.includes(artistName)) {
+            continue;
+          }
+          result.push(artistName);
+        }
+        return result.join(', ');
+      },
  
+      
+      // signOut(){ 
+      //   localStorage.removeItem('token')
+      //   this.$router.push("/login")
+      // }
+      
     },
     
     
@@ -165,7 +248,9 @@
           onSlideChange,
           EffectFade,
         };
-      }
+      },
+      
+     
     
     
   };
@@ -185,39 +270,92 @@
      
 <template class="  " >
   <!-- 'https://wallpapercave.com/wp/wp2434267.jpg' -->
-  <div style="background-image: url();background-size: cover;"
-    class="border-4 border-red-600 p-4 ">
+  <div id="conta" style="background-image: url();background-size: cover;"
+    class=" border-red-600  ">
 
- 
+    <MusicPlayer v-if="musicPlayerData" :data="musicPlayerData" />
 
-      <MusicPlayer v-if="musicPlayerData" :data="musicPlayerData" />
+    
+    
+    
+<!--     
+    <div style="background: linear-gradient(180deg, rgba(104,7,113,1) 0%, rgba(53,14,62,1) 35%, rgba(23,13,25,1) 66%, rgba(0,0,0,1) 100%);" class="w-full h-[45vh] border border-white ">
+       
+    </div> -->  
+    <!-- <div v-if="arrOfColor" class="flex mt-2 gap-2">
+      <div :style="{ background: `rgb(${arrOfColor})` }" class="w-5 h-5 border border-white"></div>
+    </div> 
+    <div v-if="topArtistColor" class="flex mt-2 gap-2">
+      <div :style="{ background: `rgb(${topArtistColor})` }" class="w-5 h-5 border border-white"></div>
+    </div>   -->
+    
+    
+    <div v-if="spotifyProfile" class="flex items-center md:order-2 ml-[45px] mt-6  border-white relative right-0 ">
+      <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+          <span class="sr-only">Open user menu</span>
+          
+          <div class="w-8 h-8 overflow-hidden  rounded-full ">
+            <img v-if="spotifyProfile.spotify?.images?.length"  class="w-full" :src="spotifyProfile?.spotify?.images[0]?.url" alt="user photo">
+            
+            <img v-else  class="w-full" src="https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg" alt="user photo"> 
+          </div>
+          
+          
+          <!-- <img v-if="spotifyProfile.spotify?.images?.length"  :src="spotifyProfile?.spotify?.images[0]?.url" width="100" height="100" alt="">
+          <img v-else  src="https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg" width="100" height="100" alt=""> -->
+        </button>
+        <!-- Dropdown menu -->
+        <div class="z-50 w-40  border-white hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+          <div class="px-4 py-3">
+            <span class="block text-sm text-gray-900 dark:text-white"> {{ spotifyProfile?.spotify?.display_name }} </span>
+            <span class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"> {{ spotifyProfile?.spotify?.country }} </span>
+          </div>
+          <!-- <ul class="py-2" aria-labelledby="user-menu-button"> 
+            <li>
+              <a href="#" @click="signOut()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+            </li>
+          </ul> -->
+        </div> 
+    </div> 
+    
+    
      
+
+
+      
+      
+
+      <!-- <div class="gradient-border">css<br />is<br />awesome</div>       -->
+      
+      
+      
       <!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3fVyiIB5BT5KjSqoRTeqce?utm_source=generator" width="600px" height="100" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
 
         <!-- TOP SONG --> 
-        <p class="mt-5 mb-2 text-xl font-semibold text-gray-900 dark:text-white">Top Song</p>
         <!-- bg-white dark:bg-gray-900  max-w-screen-xl  -->
-        <section v-if="spotifyTopTracks.items?.length" style="background-image: url(https://i.pinimg.com/originals/a8/76/d3/a876d3d1304c6b4b46648aceda8caa4a.gif);background-size: cover;" class="grid h-[30rem] rounded-2xl overflow-hidden  border-blue-900 ">
+        
+        <section v-if="spotifyTopTracks.items?.length" style="background-image: url();background-size: cover;background: linear-gradient(40deg, rgba(178,173,187,1) 0%, rgba(202,196,210,1) 39%, rgba(215,208,226,1) 100%);" class="grid mt-8 h-[80vh]  border-green-400  overflow-hidden  ">
 
           <!-- h-[100%] w-[100%] -->
-          <!-- <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1 ">
-                  <img :src="spotifyTopTracks.items[0].album.images[0].url"
-                    class="h-[100%] w-[100%] blur-sm scale-125 brightness-[0.2]  ">
-                </div> -->
+          <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1 ">
+                  <!-- <img :src="spotifyTopTracks.items[0].album.images[0].url"
+                    class="h-[100%] w-[100%] blur-sm scale-125 brightness-[0.2]  "> -->
+                     
+          </div>
 
           <!-- album rotate container -->
           <div style="z-index:"
-            class=" h-[100%] w-[100%] overflow-hidden lg:mt-0 grid items-end justify-end  border-yellow-200 row-start-1 col-start-1">
+            class=" h-[100%] w-[100%] overflow-hidden lg:mt-0 grid items-end justify-end  row-start-1 col-start-1">
             <!--                                                             -->
-            <div style="transform: rotate(30deg) translate(170px, -60px); box-shadow: -15px 130px 65px -6px rgba(0,0,0,0.31); transform-origin: 0 0; "
-              class=" h-[600px] w-[600px] grid grid-flow-col  border-white overflow-hidden ">
+            <div style="transform: rotate(30deg) translate(270px, -60px); box-shadow: -15px 130px 45px -6px rgba(0,0,0,0.31); transform-origin: 0 0; "
+              class=" h-[700px] w-[700px] grid grid-flow-col  border-white overflow-hidden ">
 
               <!-- stack gimmick -->
-              <span class="block row-start-1 h-full mt-10 ml-5 col-start-1 w-5 bg-[#11ad48]"></span>
-              <span style="" class="block row-start-1 h-full mt-20 col-start-1 w-5 bg-[#0e8036]"></span>
+              <span style="box-shadow: -8px 40px 15px -6px rgba(0,0,0,0.31); transform-origin: 0 0;" class="block z-[2] row-start-1  border-white h-full mt-10 ml-5 col-start-1 w-10 bg-[rgb(173,167,181)]"></span>
+              <span style="" class="block row-start-1 -z-1 h-full mt-20 col-start-1 w-5 bg-[rgb(173,167,181)]"></span>
               <!-- album -->
               <img :src="spotifyTopTracks.items[0].album.images[0].url"
-                class=" row-start-1 col-start-1 ml-10 h-[100%] w-[100%] ">
+              style="box-shadow: -5px 40px 20px -6px rgba(0,0,0,0.81)"  class="z-[3] row-start-1 col-start-1 ml-10 h-[100%] w-[100%] ">
 
             </div>
 
@@ -226,23 +364,30 @@
 
           <!-- lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12   -->
           <section style="filter:brightness(1);z-index:"
-            class="grid px-4 py-1 w-[50%] h-full row-start-1 col-start-1  border-red-600 justify-center items-center ">
+            class="grid pl-5 lg:pl-10 py-1 w-[55%] h-full row-start-1 col-start-1   border-red-600 justify-start  items-end md:items-center ">
 
+
+            
             <section class="  lg:col-span-7  border-white ">
+              
+              <p class=" absolute top-10 text-sm font-semibold text-gray-900 dark:text-white flex items-center"> <img src="../assets/images/pngegg_pure_white.png" class="w-10 h-10 mr-2 " /></p>
+              
+              <p class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">TOP SONG</p>
+              
               <p
-                class=" font-sans  mb-4 text-4xl font-bold tracking-tight leading-none md:text-5xl xl:text-[8rem] dark:text-white">
+                class=" font-sans  mb-4 text-4xl font-bold tracking-tight leading-none md:text-5xl xl:text-[7rem] dark:text-white">
                 {{ spotifyTopTracks.items[0].name }}</p>
                 
-              <div class="flex items-center">  
+              <div class="flex items-center  border-white ">  
                 
                 <!-- <div class=" w-[max-content]  flex justify-center items-center" @click="togglePlay(spotifyTopTracks.items[0])">
                   <ion-icon class="w-20 h-20 text-green-400 " v-if="!isPlaying" name="play-circle-sharp"></ion-icon>
                   <ion-icon class="w-20 h-20 text-green-400 " v-if="isPlaying" name="pause-circle-sharp"></ion-icon>
                 </div> -->
                 
-                <img class="w-6 h-6 rounded-full" src="https://i.scdn.co/image/ab6761610000e5ebb283c3a97aea1c06e2cf1a2c" alt="Rounded avatar">
+                <!-- <img class="w-6 h-6 rounded-full" :src="spotifyTopTracks.items[0].artists[0].images[0].url" alt="Rounded avatar"> -->
                 
-                <p class=" font-sans text-sm max-w-2xl ml-1 font-semibold text-gray-500   dark:text-white"> 
+                <p class=" font-sans text-sm max-w-2xl ml-1 font-semibold text-gray-500   dark:text-white">By
                 {{ spotifyTopTracks.items[0].artists.map(each => each.name ).join(", ") }}  </p> 
                  
                 <!-- <p class=" font-sans max-w-2xl ml-1 font-semibold text-gray-500   md:text-base lg:text-base  dark:text-white"> 
@@ -260,9 +405,9 @@
 
 
         </section>
-        <div v-else>
-          <p>No data is currently available</p>
-        </div>
+        <section v-else style="background-image: url();background-size: cover;background:gray" class="grid mt-10 h-[80vh] skeleton-box  border-green-400  overflow-hidden  ">
+ 
+        </section>
         <!-- END TOP SONG -->
 
 
@@ -274,6 +419,100 @@
         
         
         
+        <!-- TOP 10 SONGS  -->  
+      <section  v-if="spotifyTopTracks?.items?.length" style="background: #2f2e60"  class=" mt-10 h-auto   w-full box-border overflow-hidden  shadow-xl  border-yellow-300 ||  grid"> 
+        
+        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl  border-red-200 || grid lg:grid-flow-col lg:grid-cols-[max-content_1fr]  ">
+        
+          <div class="grid items-center self-end" >
+            <div style="box-shadow: -1px -1px 30px -9px rgba(0,0,0,1) "  class="w-[20rem] h-[20rem] border-l-blue-200 grid grid-flow-col grid-cols-[1fr_1fr] grid-rows-[1fr_1fr] ">
+              
+              
+              <img :src="spotifyTopTracks.items[0].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[1].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[2].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              <img :src="spotifyTopTracks.items[3].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
+              
+            </div>
+          </div>
+          
+          
+          
+          <div class="  border-l-fuchsia-600 flex flex-col justify-end lg:px-4 ">
+             
+             <p class="text-base  font-bold text-gray-900 dark:text-white">THIS IS YOUR</p>
+               
+             <p class="text-4xl  lg:text-8xl  mb-4 font-sans font-bold text-gray-900 dark:text-white"> MOST LISTENED  </p>
+              
+             <p style="color: rgba(255, 255, 255, 0.666)" class="text-sm mb-2 font-sans font-semibold ">Featured {{ getTopThree(spotifyTopTracks.items) }}, and more</p>
+   
+             <p class="text-sm font-semibold text-gray-900 dark:text-white flex items-center "> <img class="w-6 h-6 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" /> Spotify <ion-icon class="w-1 h-1 mx-1 " name="ellipse"></ion-icon>  {{ spotifyTopTracks.items.length }} Songs      <p style="background: rgba(255, 255, 255, 0.666);color:black;" class="text-[0.6rem]  border-white px-1 py-[1px] font-semibold ml-2 font-sans rounded-sm " >PREVIEW</p>
+             </p>
+             
+           </div>
+          
+          
+          
+          
+        </section>
+        
+        
+        
+         
+        <div style="background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(14,13,13,1) 33%, rgba(31,30,30,0.9) 70%, rgba(35,34,34,0.7) 85%, rgba(41,41,41,0.3) 100%)" class="relative overflow-x-auto px-4  ">
+          <table class="w-full text-sm text-left  border-white text-gray-500 dark:text-unfocus-500">
+              <thead class=" border-b border-[rgba(222,222,222,0.1)] text-gray-700 dark:text-gray-400">
+                    <tr >
+                        <th scope="col" class="px-3 py-3 w-5 text-end font-semibold ">
+                            #
+                        </th>
+                        <th scope="col" class="pr-6 py-3 font-semibold">
+                            Title
+                        </th>
+                        <th  class="px-6 py-3 font-semibold">
+                          Album
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                          <ion-icon name="time-outline"></ion-icon>
+                        </th>
+                        <!-- <th scope="col" class="px-6 py-3">
+                          
+                        </th> -->
+                    </tr>
+                </thead>
+                <tbody> 
+                      <tr  v-for="each, index in spotifyTopTracks.items"  @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-none cursor-pointer dark:focus:bg-gray-800 font-sans border border-white rounded-xl dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white`  ">
+                      <!-- <button> -->
+                        <th style="border-top-left-radius:10px; border-bottom-left-radius:10px ;" scope="row" class="px-3 py-3 text-end font-semibold  border-white whitespace-nowrap">
+                            {{ ++index }}
+                        </th>
+                        <td class="pr-6 py-2 flex  border-white ">
+                          <img :src="each.album.images[1].url" width="40" height="40" class="rounded-sm" alt="">
+                          <div class="ml-2 p-0  flex flex-col justify-center " >
+                            <p class="font-semibold font-sans text-sm flex dark:text-white  border-red-300 " >{{ each.name }}</p>
+                            <p class="font-semibold font-sans text-sm border-red-300" >{{ each.artists[0].name }}</p>
+                          </div>
+                        </td>
+                        <td class="px-6 py-2 text-sm font-semibold font-sans">
+                          {{ each.album.name }}
+                        </td>
+                        <td style="border-top-right-radius:10px; border-bottom-right-radius:10px ;"  class="px-6 py-2 text-sm font-semibold  border-white ">
+                            {{ msToTimeFormat(each.duration_ms) }}
+                        </td> 
+                      </tr>
+                      
+                      
+                </tbody>
+            </table>
+        </div>
+ 
+        
+        
+         
+      </section>
+      <div v-else>
+            <p class=" ">No data is currently available</p>
+      </div>
         
         
         
@@ -286,42 +525,50 @@
         
         
         
-        
-
 
 
 
         <!-- TOP ARTIST --> 
-        <p class="mt-5 mb-2 text-xl font-semibold text-gray-900 dark:text-white">Top Artist</p>
-        <div v-if="topArtists.items?.length"
-          class=" h-auto min-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid">
+        <div v-if="topArtists.items?.length" :style="{ background: `radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(${topArtistColor},1) 52%, rgba(33,13,57,0.2) 69%)`}" class=" h-auto min-h-[100vh] mt-10 w-full box-border overflow-hidden  shadow-xl border-[purple]  grid">
 
-          <!-- <div style="z-index:0"
+          <!-- <div style="z-index:0"   
             class=" h-[100%] w-[100%] overflow-hidden border-3 border-purple-500 row-start-1 col-start-1">
-            <img :src="topArtists.items[0].images[1].url" class=" h-[100%]  w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+            <img :src="topArtists.items[0].images[0].url" class=" h-[100px]  w-[100px]  ">
           </div> -->
-
+          
+          
+          <!-- <div  class=" h-[100px] w-[100%] rounded-t-[100%] bg-red-500 row-start-1 col-start-1 self-end "> 
+            <p class="text-white">GGGGG</p>
+          </div> -->
+          
+           
           <!-- rounded-[50px] grid-flow-col grid-cols-[max-content_1fr]  -->
-          <div style="filter:brightness(1);  "
-            class=" p-5 m-12 text-[100%] grid items-center border border-red-400   ">
+          <div style="filter:brightness(1);"
+            class="  p-5 m-12 text-[100%] grid  items-center   border-white row-start-1 col-start-1    ">
             <!--  -->
             <!-- <img :src="topArtists.items[0].images[1].url" class="  rounded-[250px]  h-[100%] border border-black "> -->
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" class="h-10 absolute right-0 top-0 w-10 border border-black ">
+            
 
             <!--  pl-16 -->
-            <div class=" text-gray-800 w-full  grid items-center  border border-black ">
+            <div class=" text-gray-800 w-full  grid items-center   border-black ">
 
+              
+              
               <!-- text-[6rem] {{ topArtists.items[0].name }} -->
-              <!-- <p class=" self-end text-[5rem] font-bold ">Eden Ben Zaken</p> -->
+              <p class=" self-end text-white text-center  text-md font-bold ">YOUR TOP ARTIST</p>
 
-              <p class="top_arist max-w-[100%] text-[500%] text-center font-bold   bg-clip-text text-transparent bg-center bg-no-repeat bg-cover border border-black "
-              :style="'background-image: url(' + topArtists.items[0].images[1].url + ')'">
+              <p class="top_arist max-w-[100%] text-[500%] text-center font-bold font-sans  bg-clip-text text-transparent bg-center bg-no-repeat bg-cover  border-black "
+              :style="'background-image: url(' + topArtists.items[0].images[1].url + ')'" >
                 {{ topArtists.items[0].name }}
               </p>  
 
               <!-- <div class="self-start"> -->
-                <p  class="font-bold top_arist border border-black text-center  "> {{ topArtists.items[0].genres.map(str => str.toLocaleUpperCase('title')).join(" - ")
+                <p :style="'background-image: url(' + topArtists.items[0].images[1].url + ')'" class="font-bold top_arist  border-black text-center  "> {{ topArtists.items[0].genres.map(str => str.toLocaleUpperCase('title')).join(" - ")
                 }}</p>
+                
+                <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" class="h-5 mx-auto  w-5  border border-black ">
+                 -->
+                
               </div>
               
             <!-- </div> -->
@@ -330,7 +577,7 @@
 
         </div>
         <div v-else>
-          <p>No data is currently available</p>
+          <p class="">No data is currently available</p>
         </div>
         <!-- END TOP ARTIST -->
 
@@ -345,38 +592,27 @@
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         <!-- TRACKS BY TOP ARTIST -->
         <!-- v-for="each in topTracksByArtist.tracks" -->
       <!-- <p class="mt-5 mb-5 text-2xl font-bold text-gray-900 dark:text-white">Based from top one artist</p>  -->
-      <section v-if="topArtists.items?.length && topTracksByArtist.tracks?.length" style="background:#008fb9;"  class=" h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
+      <section v-if="topArtists.items?.length && topTracksByArtist.tracks?.length" :style="{ background: `rgb(${topArtistColor})` }"   class=" h-auto mt-10  w-full box-border overflow-hidden  shadow-xl   border-yellow-300 ||  grid"> 
         
-        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl   border-red-200 || grid grid-flow-col grid-cols-[max-content_1fr]  ">
+        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl   border-red-200 || grid lg:grid-flow-col lg:grid-cols-[max-content_1fr]  ">
         
-          <div class=" border-2 border-l-blue-200 grid justify-center items-end ">
+          <div class="  border-l-blue-200 grid justify-center items-end ">
             <img style="box-shadow: -1px -1px 30px -9px rgba(0,0,0,1) " :src="topArtists.items[0].images[1].url" class="w-[20rem] h-[20rem]" alt="">   
           </div>
           
-          <div class=" border-2 border-l-fuchsia-600 flex flex-col justify-end px-4 ">
+          <div class="  border-l-fuchsia-600 flex flex-col justify-end px-4 ">
              
             <p class="text-base  font-bold text-gray-900 dark:text-white">THIS IS</p>
               
-            <p class="text-8xl mb-4 font-sans font-bold text-gray-900 dark:text-white"> {{ topArtists.items[0].name }}   </p>
+            <p class="text-4xl  lg:text-8xl mb-4 font-sans font-bold text-gray-900 dark:text-white"> {{ topArtists.items[0].name }}   </p>
              
-            <p class="text-sm mb-2 font-sans font-semibold text-gray-900 dark:text-unfocus-500">The most popular songs by {{ topArtists.items[0].name }}, the artist you listen to the most.</p>
+            <p style="color: rgba(255, 255, 255, 0.666)" class="text-sm mb-2 font-sans font-semibold ">The most popular songs by {{ topArtists.items[0].name }}, the artist you listen to the most.</p>
   
-            <p class="text-sm font-semibold text-gray-900 dark:text-white flex items-center "> <img class="w-6 h-6 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" />   {{ topTracksByArtist.tracks.length }} Songs</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white flex items-center "> <img class="w-6 h-6 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1024px-Spotify_logo_without_text.svg.png" /> Spotify <ion-icon class="w-1 h-1 mx-1 " name="ellipse"></ion-icon>  {{ topTracksByArtist.tracks.length }} Songs      <p style="background: rgba(255, 255, 255, 0.666);color:black;" class="text-[0.6rem]  border-white px-1 py-[1px] font-semibold ml-2 font-sans rounded-sm " >PREVIEW</p>
+            </p>
             
           </div>
           
@@ -437,14 +673,8 @@
             </table>
         </div>
         <div v-else>
-            <p>No data is currently available</p>
+            <p class="">No data is currently available</p>
         </div>
-        
-        
-        
-        
-        
-        
         
          
         <!-- <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
@@ -453,170 +683,66 @@
       </section>
        
     
-       
-        
-        
-        
-        
       
       
       
       
-       <!-- TOP 10 SONGS  -->  
-      <section  v-if="spotifyTopTracks?.items?.length" style="background: linear-gradient(0deg, rgba(24,23,41,1) 1%, rgba(3,27,33,1) 30%, rgba(12,51,62,1) 70%, rgba(7,77,97,1) 100%);"  class=" mt-10 h-auto  w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300 ||  grid"> 
-        
-        <section class="h-auto p-10 min-h-[30rem] w-full box-border overflow-hidden  shadow-xl border-4 border-red-200 || grid grid-flow-col grid-cols-[max-content_1fr]  ">
-        
-          <div class="grid items-center self-end" >
-            <div class="border-4 w-[20rem] h-[20rem] border-l-blue-200 grid grid-flow-col grid-cols-[1fr_1fr] grid-rows-[1fr_1fr] ">
-              
-              
-              <img :src="spotifyTopTracks.items[0].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
-              <img :src="spotifyTopTracks.items[1].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
-              <img :src="spotifyTopTracks.items[2].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
-              <img :src="spotifyTopTracks.items[3].album.images[1].url" class="w-[100%] h-[100%]" alt="">   
-              
-            </div>
-          </div>
-          
-          <div class="border border-l-fuchsia-600 flex flex-col justify-end px-4 ">
-             
-            <p class="text-base font-semibold text-gray-900 dark:text-white">THIS IS</p>
-              
-            <p class="text-6xl font-extrabold text-gray-900 dark:text-white"> TOP 10   </p>
-             
-            <p class="text-base font-semibold text-gray-900 dark:text-white">The most popular songs by {{ topArtists.items[0].name }}, the artist you listen to the most.</p>
-  
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ topTracksByArtist.tracks.length }} Songs</p>
-            
-          </div>
-          
-          
-        </section>
-        
-        
-        
-         
-        <div style="background-color: rgba(0, 0, 0, 0.33);" class="relative overflow-x-auto  ">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class=" border-b border-gray-800 text-gray-700 dark:text-gray-400">
-                    <tr >
-                        <th scope="col" class="px-3 py-3 w-5 text-end font-semibold ">
-                            #
-                        </th>
-                        <th scope="col" class="pr-6 py-3 font-semibold">
-                            Title
-                        </th>
-                        <th  class="px-6 py-3 font-semibold">
-                          Album
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                          <ion-icon name="time-outline"></ion-icon>
-                        </th>
-                        <!-- <th scope="col" class="px-6 py-3">
-                          
-                        </th> -->
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="each, index in spotifyTopTracks.items" @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-gray-700 dark:focus:bg-gray-800 dark:hover:bg-gray-800 dark:hover:text-white` ">
-                      <!-- <button> -->
-                        <th scope="row"  class="px-3 py-3 text-end font-medium  border-white text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ ++index }}
-                        </th>
-                        <td class="pr-6 py-2 flex  border-white ">
-                          <img :src="each.album.images[1].url" width="50" height="50" alt="">
-                          <div class="ml-2 p-0  flex flex-col justify-center " >
-                            <p class="font-semibold text-[1rem] flex dark:text-white  border-red-300 " >{{ each.name }}</p>
-                            <p class="font-semibold text-sm border-red-300" >{{ each.artists[0].name }}</p>
-                          </div>
-                        </td>
-                        <td class="px-6 py-2 font-semibold">
-                          {{ each.album.name }}
-                        </td>
-                        <td class="px-6 py-2 font-semibold">
-                            {{ msToTimeFormat(each.duration_ms) }}
-                        </td> 
-                      </tr>
-                </tbody>
-            </table>
-        </div>
+      
+      
+      
+      
  
-        
-        
-         
-      </section>
-      <div v-else>
-            <p>No data is currently available</p>
-      </div>
       
       
-       
-       
-        
-        
-        <!-- TOP ARTIST --> 
-       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top Artist</p>
-       
-        <section v-if="topArtists.items?.length"
-          class="  h-[20rem] w-full box-border overflow-hidden  shadow-xl border-4 border-yellow-300  grid items-center">
-          
-          
-        <swiper  :slides-per-view="'auto'" class=" h-[100%] w-full border-4 border-blue-400 ">
-          
-        <swiper-slide v-for="each, index in topArtists.items" :key="index"  class="  w-[max-content] border border-red-400  | grid items-center ">
-          
-            <div class="border bg-black border-white text-center ">
-              <img class="w-36 h-36 rounded-full" :src="each.images[0].url" alt="Large avatar">
-              <p class="text-xs mt-2 font-semibold text-gray-900 dark:text-white">{{ each.name }}</p>
-            </div>  
+      
             
-        </swiper-slide>
-          
-        </swiper>   
-        </section>
-        <section v-else>
-          <p>No data is currently available</p>
-        </section>
-        <!-- END TOP ARTISTS -->
-        
-        
+        <!-- TOP ARTIST --> 
+       <!-- <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white"> Top Artist</p> -->
+       
+       <section v-if="topArtists.items?.length" :style="{ boxShadow: `-1px 26px 98px -59px rgba(${topArtistColor},0.43)`}"
+         class=" mt-10  h-[15rem] w-full box-border overflow-hidden shadow-xl  pl-4 border-yellow-300  grid items-center">
+         
+         <p class="  border-white text-xl font-semibold text-gray-900 dark:text-white">Your Top Artist</p> 
+         
+       <swiper  :slides-per-view="'auto'" class=" w-full  border-blue-400  ">
+         
+       <swiper-slide v-for="each, index in topArtists.items" :key="index"  class="  w-36   border-red-400 mr-4 mt-0 | grid items-baseline  ">
+         
+           <div class="  border-white text-center  ">
+             <img class="w-36 h-36 rounded-full" :src="each.images[0].url" alt="Large avatar">
+             <p class="text-xs mt-2 font-semibold text-gray-900 dark:text-white">{{ each.name }}</p>
+           </div>  
+           
+       </swiper-slide>
+         
+       </swiper>   
+       </section>
+       <section v-else>
+         <p>No data is currently available</p>
+       </section>
+       <!-- END TOP ARTISTS -->
+       
       
-        <div class="pt-[40px] w-[100%] h-[100vh] box-border  ">
-
-      <swiper :slides-per-view="1" :space-between="1" @swiper="onSwiper" @slideChange="onSlideChange"
-        :modules="[EffectFade]" effect="fade" class=" h-[100%] ">
-
-        <swiper-slide class=" | grid">
-          <img
-            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            class=" w-[100%] row-start-1 col-start-1  ">
-          <div class=" pt-14 pl-14 row-start-1 col-start-1">
-            <p class="font-bold text-white"> <span class="text-6xl">macMovie</span> <br> <span>Explore your own
-                desires.</span></p>
-          </div>
-        </swiper-slide> 
-        <swiper-slide class=" | grid">
-          <img
-            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            class=" w-[100%] row-start-1 col-start-1  ">
-          <div class=" pt-14 pl-14 row-start-1 col-start-1">
-            <p class="font-bold text-white"> <span class="text-6xl">macMovie</span> <br> <span>Explore your own
-                musuhashem.</span></p>
-          </div>
-        </swiper-slide> 
-
-      </swiper>
-      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       
       
       
         <!-- TOP COUNTRY BASED --> 
-        <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Based on your country</p>
+        <p class="mt-[50vh] text-xl ml-8 font-semibold text-gray-900 dark:text-white">Top Local</p>
         <section v-if="topLocal.tracks?.items?.length"
-          class=" w-full box-border overflow-hidden p-4 shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3  ">
+          class=" w-full box-border overflow-hidden p-4 shadow-xl  border-yellow-300  grid items-center grid-flow-cols grid-cols-1 md:grid-cols-2 lg:grid-cols-3   ">
           
           
         <button v-for="each, index in topLocal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer  font-sans  border-[rgba(222,222,222,0.1)] rounded-xl border-t  dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white dark:text-unfocus-500 mx-2 dark:focus:bg-[rgba(222,222,222,0.3)] cursor-pointer  `">
@@ -642,7 +768,7 @@
          
         </section>
         <section v-else>
-          <p>No data is currently available</p>
+          <p class=" ">No data is currently available</p>
         </section>
         <!-- END COUNTRY BASED -->
       
@@ -652,10 +778,10 @@
         
         
        <!-- TOP GLOBAL --> 
-       <p class="mt-5 mb-5 text-4xl font-bold text-gray-900 dark:text-white">Top global</p>
+       <p class="mt-[5vh] text-xl ml-8 font-semibold text-gray-900 dark:text-white">Top Global</p>
          
         <section v-if="topGlobal.tracks?.items?.length"
-          class=" w-full box-border overflow-hidden p-4 shadow-xl border-4 border-yellow-300  grid items-center grid-flow-cols grid-cols-3  ">
+          class=" w-full box-border overflow-hidden p-4 shadow-xl  border-yellow-300  grid items-center grid-flow-cols  grid-cols-1 md:grid-cols-2 lg:grid-cols-3  ">
           
           
         <button v-for="each, index in topGlobal.tracks.items" @dblclick="playMusic(each.track)" :class="` ${isPreviewAvailable(each.track)} teer  font-sans  border-[rgba(222,222,222,0.1)] rounded-xl border-t  dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white dark:text-unfocus-500 mx-2 dark:focus:bg-[rgba(222,222,222,0.3)] cursor-pointer  `">
@@ -701,6 +827,27 @@
 
       <!-- <p class="text-white">my code: {{ token }}</p> -->
 
+    
+    <footer class=" bg-white h-28 rounded-lg shadow m-4 dark:bg-gray-800">
+        <div class="w-full mx-auto  md:p-6 p-4 md:flex md:items-center md:justify-between">
+          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© Craftly made by <a href="https://macnesa.com/" class="hover:underline font-semibold">macnesa</a>. This app used Spotify official api to access your data.
+        </span>
+        <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+            <li>
+                <a href="https://developer.spotify.com/documentation/web-api/" class="mr-4 hover:underline md:mr-6 ">Spotify API</a>
+            </li>
+            <li>
+                <a href="https://developer.spotify.com/policy/" class="mr-4 hover:underline md:mr-6">Privacy Policy</a>
+            </li>
+            <li>
+                <a href="https://github.com/macnesa" class="mr-4 hover:underline md:mr-6">Visit My Github</a>
+            </li>
+            <li>
+                <a href="https://www.instagram.com/macnesa_/" class="hover:underline">My Ig</a>
+            </li>
+        </ul>
+        </div>
+    </footer>
 
  
 
@@ -804,13 +951,13 @@
   
   
 @-webkit-keyframes slidein {
-from {background-position: top; background-size:3000px; }
-to {background-position: -100px 0px;background-size:2750px;}
+from {background-position: bottom; background-size:7000px; }
+to {background-position: -100px 0px;background-size:6750px;}
 }
 
 @keyframes slidein {
-from {background-position: top;background-size:3000px; }
-to {background-position: -100px 0px;background-size:2750px;}
+from {background-position: bottom;background-size:7000px; }
+to {background-position: -100px 0px;background-size:6750px;}
 
 }  
  .top_arist{
@@ -838,8 +985,19 @@ to {background-position: -100px 0px;background-size:2750px;}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 .container {
-	background:#1F2024;
+	background:#040404;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: row;
@@ -972,21 +1130,104 @@ h1 {
 
 
 
+
+
+
+
+
+
+.skeleton-box {
+	 display: inline-block;
+	 height: 1em;
+	 position: relative;
+	 overflow: hidden;
+	 background-color: #dddbdd;
+}
+ .skeleton-box::after {
+	 position: absolute;
+	 top: 0;
+	 right: 0;
+	 bottom: 0;
+	 left: 0;
+	 transform: translateX(-100%);
+	 background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+	 animation: shimmer 2s infinite;
+	 content: '';
+}
+ @keyframes shimmer {
+	 100% {
+		 transform: translateX(100%);
+	}
+}
+
+
+
+
   
 </style>
 
 
 
-
-
-
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 {
   "album": {

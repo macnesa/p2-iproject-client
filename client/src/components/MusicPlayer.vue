@@ -26,8 +26,7 @@
         this.$refs.myAudio.load();
         this.$refs.myAudio.src = newVal.preview_url;
         document.getElementById("myAudio").play();
-        this.isPlaying= true;
-        // console.log("KONTOL AYAM");
+        this.isPlaying= true; 
       }
     },
     
@@ -155,16 +154,17 @@
 <template>
   
   
-<section v-if="data" id="audioControls" class="fixed z-50 top-0 left-[60vw] right-4 p-2 bg-yellow-800 text-white rounded-xl" style="max-width: 600px;"> 
+<section v-if="data" id="audioControls" class="fixed z-50 top-0 right-4 p-2 backdrop-blur-xl text-white rounded-xl" style="width: 400px;background: rgba(0,0,0,0.5);"> 
   
    <section class=" border-white  ">
       <img style="box-shadow: -1px -1px 30px -9px rgba(0,0,0,0.3) " :src="data.album.images[0].url" class="w-20 h-20 rounded-xl" />
    </section>
    
-   <section class="  border-white pl-4 ">
-    <section class=" border-white flex justify-between items-center ">
-    <p class="text-normal text-md  font-sans text-gray-900 dark:text-white font-bold">{{ data.name }}</p>
-    <p style="background: rgba(255, 255, 255, 0.766);color:black;" class="text-[0.6rem]  border-white px-1 py-[1px] font-semibold font-sans rounded-sm " >PREVIEW</p>
+   <section class="  border-white pl-4   overflow-hidden   ">
+    
+    <section class=" border-white flex justify-between items-center   ">
+      <p class="text-normal text-md whitespace-nowrap overflow-hidden text-ellipsis font-sans text-gray-900 dark:text-white font-bold">{{ data.name }}</p>
+      <p style="background: rgba(255, 255, 255, 0.766);color:black;" class="text-[0.6rem]  border-white px-1 py-[1px] font-semibold font-sans rounded-sm " >PREVIEW</p>
     </section>
     
     <p style="color: rgba(255, 255, 255, 0.666)" class="text-xs font-semibold font-sans ">{{ data.artists[0].name  }}</p>

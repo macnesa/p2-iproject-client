@@ -48,27 +48,17 @@
 
 
 <template>
-  <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar"
-    aria-controls="cta-button-sidebar" type="button"
-    class="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-    <span class="sr-only">Open sidebar</span>
-    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-      <path clip-rule="evenodd" fill-rule="evenodd"
-        d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
-      </path>
-    </svg>
-  </button>
-
-  <aside style="opacity:0.9" id="cta-button-sidebar"
+   
+  <aside style="opacity:1" id="cta-button-sidebar"
     class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-black">
       <ul class="space-y-2">
         
-        <li class="border border-white" >
+        <li class=" border-white" >
           <a href="#"
-            class="flex border border-white items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white">       
-            <img src="../assets/images/pngegg.png" class="w-10 h-10" /> 
+            class="flex  border-white items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white">       
+            <img src="../assets/images/pngegg_pure_white.png" class="w-10 h-10" /> 
             <p style="letter-spacing: -1px;" class="ml-1 text-xl ">Spotify</p>
             <p style="letter-spacing: -1px; font-weight: bold;" class="ml-1 text-xl ">Insight</p>
           </a>
@@ -95,28 +85,25 @@
         </li> 
       </RouterLink> 
       
-        <li>
+        <!-- <li>
           <a href="#"
             class="flex items-center p-2 text-sm transition duration-75 font-semibold text-gray-900 rounded-lg dark:text-unfocus-500  dark:hover:text-white">
             <ion-icon aria-hidden="true"
               class="w-6 h-6 " name="sparkles-sharp"></ion-icon>
             <span class="ml-3"> Spotify Library </span>
           </a>
-        </li>
+        </li> -->
 
-      </ul>
-      <RouterLink to="/auth">
+      </ul> 
         
-        
-        
-        
-      <section id="dropdown-cta" class=" absolute bottom-2 right-2 mt-6 dark:bg-gray-900  border border-white " role="alert">
          
-        <!-- <p class="text-xs text-gray-900 dark:text-white text-center font-bold">LISTENING TO SPOTIFY</p> -->
+      <section id="dropdown-cta" class=" absolute bottom-2 right-2 mt-6 dark:bg-gray-900   border-white " role="alert">
+         
+        <!-- <p class="text-xs text-gray-900 dark:text-white text-center font-bold">LISTENING N</p> -->
         
         
-        <section class="mt-2 border border-black" v-if="Object.keys(currentlyPlaying).length">
-          <img style="filter: contrast(1.1) brightness(0.9);" :src="currentlyPlaying.item.album.images[0].url" class="border  " alt="">
+        <section class="mt-2  border-black" v-if="Object.keys(currentlyPlaying).length">
+          <img style="filter: contrast(1.1) brightness(0.9);" :src="currentlyPlaying.item.album.images[0].url" class="  " alt="">
           
           
           <section class="py-2 px-4  border-white bg-black ">
@@ -154,11 +141,7 @@
       </section>
       
       
-      
-      
-      
-      
-    </RouterLink>
+       
     </div>
   </aside>
 </template>
