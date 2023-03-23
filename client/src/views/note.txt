@@ -1,0 +1,601 @@
+
+  <p class="mt-5 text-[2rem] ">My Top Song</p>
+  <div v-if="spotifyTopTracks.items?.length"
+    class="mt-5 w-full h-[30rem] shadow-xl  rounded-3xl border border-black overflow-hidden grid">
+
+  <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+    <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+  </div>
+
+  <div style="filter:brightness(1); box-shadow: inset 93px 33px 201px 5px black;"
+    class="row-start-1 col-start-1 grid grid-flow-col grid-cols-[1fr_max-content] ">
+    <div class=" pl-16 text-white  grid items-center ">
+      <p class="text-[10rem] self-end ">{{ spotifyTopTracks.items[0].name }}</p>
+      <div class="self-start">
+        <p class="font-bold">By {{ spotifyTopTracks.items[0].artists[0].name }}</p>
+        <p class="">{{ msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
+          <button @click="playSong(spotifyTopTracks.items[0].id)" type="button"
+            class=" mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Play</button>
+      </div>
+    </div>
+    <div class=" my-8 mr-16 ">
+      <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" h-[100%] ">
+    </div>
+  </div>
+
+  </div>
+  <div v-else>
+    <p>No data is currently available</p>
+  </div>
+
+
+<p class="mt-5  text-[2rem]">My Top Artist</p>
+<div v-if="topArtists.items?.length" class="mt-5 w-full h-[30rem] shadow-xl  overflow-hidden grid">
+
+  <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+      <img :src="topArtists.items[0].images[1].url" class=" w-[100%] blur-lg scale-125 brightness-[0.2]  ">
+    </div>
+
+  <div style="filter:brightness(1); "
+    class=" p-5 m-12 rounded-[50px] bg-white row-start-1 col-start-1 grid grid-flow-col grid-cols-[max-content_1fr] ">
+
+    <img :src="topArtists.items[0].images[1].url" class=" ml-16 rounded-[250px]  h-[100%] ">
+    <div class=" pl-16 text-gray-800  grid items-center ">
+      <p class="text-[6rem] self-end ">{{ topArtists.items[0].name }}</p>
+      <div class="self-start">
+        <p class="font-bold"> {{ topArtists.items[0].genres.join(' - ') }}</p>
+      </div>
+      </div>
+
+    </div>
+
+</div>
+<div v-else>
+  <p>No data is currently available</p>
+</div>
+
+
+
+
+
+<div v-if="topArtists.items?.length" class=" box mt-10">
+  <ArtistCard v-for="each, index in topArtists.items" v-bind:artist="each" :key="index" />
+</div>
+<div v-else>
+  <p>No data is currently available</p>
+</div>
+
+
+<!-- <header v-if="spotifyTopTracks.items?.length" v-for="each in spotifyTopTracks.items"
+    class="w-full h-20 shadow-xl border border-black  rounded-3xl grid grid-flow-col justify-evenly items-center ">
+    <div class="w-12 h-12 rounded-sm border border-black overflow-hidden ">
+      <img :src="each.album.images[1].url" width="100" height="100" alt="">
+    </div>
+    <div class="">
+      <p> <b>{{ each.name }} </b> </p>
+      <p>{{ each.artists[0].name }} </p>
+      <p>{{ each.album.name }} </p>
+          </div>
+    <div class="">
+      <p>{{ msToTimeFormat(each.duration_ms) }}</p>
+      <button @click="playSong(each.id)">Play</button>
+      <button v-if="(spotifyProfile.isPaid)" @click="download(each.id)">Download</button> 
+    </div>
+
+        </header>
+        <div v-else>
+          <p>No data is currently available</p>
+        </div> -->
+
+
+  <div class="mt-10  text-[2rem]">
+    <p>Recently played</p>
+  </div>
+  <MusicCard v-if="recentlyPlayed.items?.length" :data="recentlyPlayed.items[0].track" />
+  <div v-else>
+    <p>No data is currently available</p>
+  </div>
+
+
+  <MusicTable />
+
+  <header v-if="iframeSrc"
+    class=" h-20 shadow-xl  w-[] rounded-3xl grid grid-flow-col justify-evenly items-center fixed bottom-5 ">
+    <iframe style="border-radius:12px" :src="iframeSrc" class="w-[90vw]" frameborder="0" allowtransparency="true"
+      allow="encrypted-media" autoplay></iframe>
+    <!-- <iframe id="spotify-iframe" :src="iframeSrc" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
+    <!-- <button onclick="">Play</button> -->
+  </header>
+
+  <!-- <div>
+          <select v-model="selectedLanguage" id="language">
+            <option v-for="language in languages" :value="language.code">{{ language.name }}</option>
+          </select>
+          <button class="record" @click="toggleRecording">
+            <p>Start Listening</p>
+          </button>
+          <div class="result">
+            <p v-for="text in texts">{{ text }}</p>
+          </div>
+          <button class="download" :disabled="texts.length === 0" @click="download">Download</button>
+          <button class="clear" @click="clear">Clear</button>
+        </div> -->
+  <p>my code: {{ token }}</p>
+  <!-- <p>my code: {{ token }}</p>
+  
+        <h1>Hi, {{ spotifyProfile.spotify.display_name }}</h1>
+        <img :src="spotifyProfile.spotify.images[0].url" width="100" height="100" alt="">
+        <h1>status: {{ (spotifyProfile.isPaid) ? "premium" : "unpaid"  }}</h1>
+        <button @click="snap()" id="pay-button">Pay!</button>
+        <button @click="download()" >downlaod</button>
+        <br>  -->
+        
+  <!-- <input v-model="search"   id="search_spotify" type="text" name="" > <button @click="searchSongs(search)" >Search a song </button> -->
+
+  <!-- <ul v-if="searchList" > 
+          <li v-for="each in searchList.tracks.items" > 
+            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }} -  {{ each.artists[0].name }} -  {{ each.album.name }} -  {{ msToTimeFormat(each.duration_ms) }}
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
+          </li> 
+        </ul> -->
+
+
+
+  <!-- <ul> 
+          <li>you favourite artists</li>
+          <li v-for="each in topArtists.items" > 
+            <img :src="each.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }} followers: {{ each.followers.total  }} popularity: {{ each.popularity }} {{ each.genres.join(', ') }}
+          </li>
+    
+        </ul> -->
+
+  <!-- <ul> recentlyPlayed.items[0].track.name
+          <li>your reccently played</li>
+          <li v-for="each in recentlyPlayed.items" > 
+            <img :src="each.track.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ msToTimeFormat(each.track.duration_ms)  }}  
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.track.id }}</button>      
+          </li>
+        </ul> -->
+
+  <!-- <ul> 
+          <li>your top tracks</li> 
+          <li v-for="each in spotifyTopTracks.items" > 
+            <img :src="each.album.images[1].url"  width="50" height="50" alt="">  
+            {{ each.name }}  - {{ each.artists[0].name }} - {{ msToTimeFormat(each.duration_ms)  }} - 
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.id)" >{{ each.id }}</button> - 
+            <iframe style="border-radius:12px" :src="getEmbedLink(each.id)" width="500px" height="50px" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      
+          </li>
+        </ul> -->
+  <!-- 
+  
+        <div>
+          <div id="embed-iframe"></div>
+          <button @click="playEpisode">Play Episode</button>
+        </div>  -->
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+    <!-- <div v-if="spotifyTopTracks.items?.length"
+          class="mt-5 w-full h-[30rem] shadow-xl   border border-black overflow-hidden grid">
+
+          <div style="z-index:0" class=" h-[100%] w-[100%] overflow-hidden row-start-1 col-start-1">
+            <img :src="spotifyTopTracks.items[0].album.images[0].url" class=" w-[100%] blur-lg scale-125 brightness-[0.5]  ">
+          </div>
+
+          <div style="filter:brightness(1); box-shadow: inset 93px 33px 201px 5px black;"
+            class="row-start-1 col-start-1 grid grid-flow-col grid-cols-[1fr_max-content] ">
+            <div class=" pl-16 text-white  grid items-center ">
+              <p class="text-[10rem] self-end ">{{ spotifyTopTracks.items[0].name }}</p>
+              <div class="self-start">
+                <p class="font-bold">By {{ spotifyTopTracks.items[0].artists[0].name }}</p>
+                <p class="">{{ msToTimeFormat(spotifyTopTracks.items[0].duration_ms) }}</p>
+                <button @click="playSong(spotifyTopTracks.items[0].id)" type="button"
+                  class=" mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Play</button>
+              </div>
+            </div>
+            <div class=" my-8 mr-16 ">
+              <img :src="spotifyTopTracks.items[0].album.images[1].url" class=" h-[100%] ">
+            </div>
+          </div>
+
+        </div>  -->
+
+    <!-- <div v-else>
+          <p>No data is currently available</p>
+        </div> -->
+
+    <!-- <div class="w-full h-[30vh] border border-white " >
+      
+      </div> -->
+    <div class="mt-10"></div>
+    
+    
+    
+     
+
+    
+ 
+ 
+    
+
+//get tracks by top 1 song
+      <div v-if="tracksByTopOneSong.tracks?.length" v-for="each in tracksByTopOneSong.tracks"> 
+        <img :src="each.album.images[0].url"  width="50" height="50" alt="">  
+        <p class="text-white" > {{ each.name }} ({{ each.id }}) - {{ each.album.release_date }}  -  On {{ each.album.name }}  -  Popularity: {{ each.popularity }} </p>
+        <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>  
+      </div>
+    
+    
+    
+    
+      <div class="mt-10  text-[2rem]">
+        <p>Currently playing</p>
+      </div>
+
+      <div v-if="Object.keys(currentlyPlaying).length">
+        <img :src="currentlyPlaying.item.album.images[0].url" width="50" height="50" alt="">
+        <p class="text-white"> {{ currentlyPlaying.item.name }} ({{ currentlyPlaying.item.id }}) - On {{
+          currentlyPlaying.item.album.name }} </p>
+
+        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div class="bg-blue-600 h-2.5 rounded-full" :style="{ width: `${hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms)}%` }" ></div>
+        </div>
+
+        <p class="text-white"> {{ msToTimeFormat(currentlyPlaying.progress_ms) }} * {{
+          msToTimeFormat(currentlyPlaying.item.duration_ms) }} </p>
+
+        <p  class="text-white"> {{ hitungPersentase(currentlyPlaying.progress_ms, currentlyPlaying.item.duration_ms) }} </p>
+
+        <p v-for="each in currentlyPlaying.item.artists" class="text-white"> {{ each.name }} </p>
+        <!-- <p v-for="tiap in each.artists"  class="text-white" > {{ tiap.name }} </p>   -->
+      </div>
+      <div v-else>
+        <p>No data is currently available</p>
+      </div>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    TOP LOCAL 
+  <ul>
+          <li class="text-white">
+            <img :src="topLocal.images[0].url" width="50" height="50" alt="">  - {{ topLocal.name }}
+          </li>
+          <li class="text-white" v-for="each in topLocal.tracks.items" >
+            <img :src="each.track.album.images[1].url" alt="" width="50" height="50" >  
+            {{ each.track.name }} - {{ each.track.artists[0].name }} - {{ each.track.album.name }} - {{ msToTimeFormat(each.track.duration_ms) }}
+            <button v-if="(spotifyProfile.isPaid)"  @click="getDownloadLink(each.track.id)" >{{ each.id }}</button>      
+      
+          </li>
+        </ul>
+        
+        
+        
+    // music player
+    <audio controls id="audio-preview">
+      <source
+        src="https://p.scdn.co/mp3-preview/d9b24f965612634533d7f0ba0d3ae64f4c9b92bf?cid=452e9e3c55cc45edba2aae2ce39a734c"
+        type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script>
+import { mapActions, mapState, mapWritableState } from "pinia";
+import { useDataStore } from "../stores/counter";
+import { RouterLink, RouterView } from "vue-router";
+import router from '../router'
+
+import ArtistCard from "../components/ArtistCard.vue"
+
+import MusicTable from "../components/Table.vue"
+import MusicCard from "../components/MusicCard.vue"
+
+export default {
+  components: {
+    ArtistCard,
+    MusicTable,   
+    MusicCard
+  },
+  data() {
+    return {
+      token: '',
+      search: '',
+      languages: [
+        {
+          no: "16",
+          name: "English",
+          native: "English",
+          code: "en",
+        }
+      ],
+      selectedLanguage: "en",
+      texts: [],
+      // texts: '',
+      iframeSrc: '',
+      isPaused: false,
+      spotifyId: 'spotify:episode:43cbJh4ccRD7lzM2730YK3',
+      player: null,
+      intervalId: null
+    };
+  },
+
+  async beforeMount() {
+
+  },
+
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getCurrentPlaying()
+    }, 500);
+     
+    var audio = document.getElementById("audio-preview");
+    audio.play();
+    
+  },
+
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
+
+  created() {
+    const token = localStorage.getItem('token')
+    if (token) {
+      this.token = token
+      // this.login(code)
+      this.getProfile()
+      this.getTopTracks()
+      this.getTopArtists() // iclude top tracks by top 1 artist
+      this.getRecentlyPlayed()
+      this.getTopGlobal()
+      this.getTopLocal()
+      this.getCurrentPlaying()
+    }
+    
+    
+  },
+  watch: {
+
+  },
+  computed: {
+    ...mapState(useDataStore, ["spotifyProfile", "spotifyTopTracks", 'topLocal', "recentlyPlayed", "topArtists", "topTracksByArtist", "currentlyPlaying", "tracksByTopOneSong", "searchList", "topGlobal"]),
+    // ...mapWritableState(useDataStore, ["access_token"]),
+  },
+  methods: {
+    ...mapActions(useDataStore, ["login", "getProfile", "getTopLocal", "getTopTracks", "getTopArtists", "getTopTracksByArtist", "getRecentlyPlayed", "getCurrentPlaying", "searchSongs", "getTopGlobal", "snap", "getDownloadLink"]),
+    tes() {
+    },
+    msToTimeFormat(milliseconds) {
+      var minutes = Math.floor(milliseconds / (1000 * 60));
+      var seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+      return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    },
+    playSong(id) {
+      this.iframeSrc = `https://open.spotify.com/embed/track/${id}?utm_source=generator`
+      // document.getElementById('spotify-iframe').contentWindow.postMessage('play', 'https://open.spotify.com');
+    },
+    async download(id) {
+      const link = await this.getDownloadLink(id)
+      window.location.href = "https://api.spotifydown.com/dl/Omer%20Adam%20-%20%D7%90%D7%A0%D7%99.mp3";
+    },
+    join(arr) {
+      return arr.join(',')
+    },
+    hitungPersentase(waktuBerlalu, totalWaktu) {
+      const persentase = (waktuBerlalu / totalWaktu) * 100;
+      return persentase.toFixed(2); // Pembulatan menjadi 2 digit desimal
+    }
+  },
+};
+
+
+</script>
+
+
+
+
+
+ 
+<template class="  " >
+  <div style="background-image: url('https://wallpapercave.com/wp/wp2434267.jpg');background-size: cover;"
+    class="border-4 border-red-600 p-4 ">
+
+
+ 
+    
+
+<div class="p-4 sm:ml-64 bg-red-200 ">
+   <div class="p-4 border-2 bg-white border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+     
+      
+   </div>
+</div>
+
+    
+
+
+
+  </div>
+
+
+
+
+
+  <p>my code: {{ token }}</p>
+</template>
+
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <style>
+
+
+
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
+ 
+
+@-webkit-keyframes slidein {
+from {background-position: top; background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+}
+
+@keyframes slidein {
+from {background-position: top;background-size:3000px; }
+to {background-position: -100px 0px;background-size:2750px;}
+
+}  
+ h1{
+ background-image: url('https://static.pexels.com/photos/414171/pexels-photo-414171.jpeg');
+  background-size:cover;
+  text-align:center;
+  font-weight:bold;
+  font-size:100px;
+  color:white;
+  font-family: 'Source Code Pro', monospace;
+  text-transform:uppercase;
+   background-size: cover;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    -webkit-animation: slidein 100s;
+        animation: slidein 100s ; 
+
+        -webkit-animation-fill-mode: linear;
+        animation-fill-mode: linear;
+
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+
+        -webkit-animation-direction: linear;
+        animation-direction: linear;  
+}
+
+</style>
+ 
+ <h1>
+   Background Animation
+   </h1> 

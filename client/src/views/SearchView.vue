@@ -3,7 +3,12 @@
   import { useDataStore } from "../stores/counter";
   import { RouterLink, RouterView } from "vue-router";
   import router from '../router'
+  import MusicPlayer from "../components/MusicPlayer.vue";
 
+  
+  
+  
+  
   let SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition,
   recognition,
@@ -12,7 +17,7 @@
 
   export default {
     components: {
-      
+      MusicPlayer
     },
     data() {
       return {
@@ -28,7 +33,8 @@
         ],
         selectedLanguage: "en",
         texts: [], 
-        iframeSrc: ''
+        iframeSrc: '',
+        musicPlayerData: null
       };
     }, 
     created() {
@@ -113,6 +119,21 @@
         recognition.stop();
         this.recording = false;
       },
+      
+      
+      
+    playMusic(data) {
+      this.musicPlayerData = data;
+      // alert('MENGDINA', this.musicPlayerData);
+    },
+    
+    isPreviewAvailable(data) {
+      if(!data.preview_url) {
+        return "pointer-events-none" 
+      }
+    }
+      
+      
     },
   };
 
@@ -121,6 +142,11 @@
 
 
 <template>
+    
+  <section class="h-auto min-h-[100vh] bg-gray-800 " >
+     
+  
+    <MusicPlayer v-if="musicPlayerData" :data="musicPlayerData" />
 
    <!-- <input v-model="search"   id="search_spotify" type="text" name="" > <button @click="searchSongs(search)" >Search a song </button> -->
 
@@ -139,76 +165,85 @@
     <button class="clear" @click="clear">Clear</button>
   </div>
   
-  <form  @submit.prevent="searchSongs(search)" class="flex items-center mt-10 w-[60vw] m-auto ">   
+  <form  @submit.prevent="searchSongs(search)" class="flex items-center mt-10 ml-10 w-[30vw]   border-white ">   
     <label for="voice-search" class="sr-only">Search</label>
     <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+          <ion-icon name="search-outline"></ion-icon>
         </div>
-        <input v-model="search" type="text" id="voice-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  " placeholder="Search Songs..." required>
+        <input v-model="search" type="text" id="voice-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  rounded-full focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5  " placeholder="Search songs..." required>
         <button @click="toggleRecording" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3">
             <svg aria-hidden="true" class="w-4 h-4 text-gray-500  hover:text-gray-900 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path></svg>
         </button>
     </div>
-    <button type="submit" class="inline-flex items-center py-2.5 px-3 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
+    <!-- <button type="submit" class="inline-flex items-center py-2.5 px-3 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
         <svg aria-hidden="true" class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>Search
-    </button>
+    </button> -->
 </form>
+  
+  
  
-   
-  <div v-if="searchList" class="relative overflow-x-auto mt-10 ">
-    <table class="w-full text-sm text-left text-black">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
-                <th scope="col" class="px-6 py-3 w-5 ">
-                    #
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Song
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Album
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Duration
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="each, index in searchList.tracks.items" class="bg-white border-b">
-                <th scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">
-                    {{ ++index }}
-                </th>
-                <td class="px-6 py-2 flex ">
-                  <img :src="each.album.images[1].url" width="50" height="50" alt="">
-                  <div class="ml-2 p-0  grid  " >
-                    <p class="font-bold top-0 text-[1.1rem] flex " >{{ each.name }}</p>
-                    <p class="self-end" >{{ each.artists[0].name }}</p>
-                  </div>
-                </td>
-                <td class="px-6 py-2">
-                  {{ each.album.name }}
-                </td>
-                <td class="px-6 py-2">
-                    {{ msToTimeFormat(each.duration_ms) }}
-                </td>
-                <td>
-                  <button @click="playSong(each.id)" type="button" class=" mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Play</button>        
-                  <button v-if="(spotifyProfile.isPaid)" @click="download(each.id)" class=" mt-4 focus:outline-none text-white bg-cyan-700 hover:bg-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2" >Download</button>   
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-  
-  
+
+<div v-if="searchList"  class="relative overflow-x-auto px-4  ">
+          <table class="w-full text-sm text-left  border-white text-gray-500 dark:text-unfocus-500">
+              <thead class=" border-b border-[rgba(222,222,222,0.1)] text-gray-700 dark:text-gray-400">
+                    <tr >
+                        <th scope="col" class="px-3 py-3 w-5 text-end font-semibold ">
+                            #
+                        </th>
+                        <th scope="col" class="pr-6 py-3 font-semibold">
+                            Title
+                        </th>
+                        <th  class="px-6 py-3 font-semibold">
+                          Album
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                          <ion-icon name="time-outline"></ion-icon>
+                        </th>
+                        <!-- <th scope="col" class="px-6 py-3">
+                          
+                        </th> -->
+                    </tr>
+                </thead>
+                <tbody class=""> 
+                      <tr  v-for="each, index in searchList"  @dblclick="playMusic(each)" :class="` ${isPreviewAvailable(each)} teer dark:border-none cursor-pointer dark:focus:bg-gray-800  font-sans border border-white rounded-xl dark:hover:bg-[rgba(222,222,222,0.1)] dark:hover:text-white`  ">
+                      <!-- <button> -->
+                        <th style="border-top-left-radius:10px; border-bottom-left-radius:10px ;" scope="row" class="px-3 py-3 text-end font-semibold  border-white whitespace-nowrap">
+                            {{ ++index }}
+                        </th>
+                        <td class="pr-6 py-2 flex  border-white ">
+                          <img :src="each.album.images[1].url" width="40" height="40" class="rounded-sm" alt="">
+                          <div class="ml-2 p-0  flex flex-col justify-center " >
+                            <p class="font-semibold font-sans text-sm flex dark:text-white  border-red-300 " >{{ each.name }}</p>
+                            <p class="font-semibold font-sans text-sm border-red-300" >{{ each.artists[0].name }}</p>
+                          </div>
+                        </td>
+                        <td class="px-6 py-2 text-sm font-semibold font-sans  ">
+                          {{ each.album.name }}
+                        </td>
+                        <td style="border-top-right-radius:10px; border-bottom-right-radius:10px ;"  class="px-6 py-2 text-sm font-semibold  border-white ">
+                            {{ msToTimeFormat(each.duration_ms) }}
+                        </td> 
+                      </tr>
+                      
+                      
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
   
 <header v-if="iframeSrc" class=" h-20 shadow-xl  w-[] rounded-3xl grid grid-flow-col justify-evenly items-center fixed bottom-5 ">
+  
     <iframe style="border-radius:12px" :src="iframeSrc" class="w-[90vw]" frameborder="0" allowtransparency="true"
-      allow="encrypted-media" autoplay></iframe>
+    allow="autoplay; clipboard-write; encrypted-media;" ></iframe>
+      
+      <!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/2DnhLgUJg8yx8E4uwPFjYQ?utm_source=generator" width="40%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
+      
     <!-- <iframe id="spotify-iframe" :src="iframeSrc" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
     <!-- <button onclick="">Play</button> -->
   </header>
@@ -223,7 +258,7 @@
   </ul> -->
  
   
-  
+</section> 
    
 </template>
 

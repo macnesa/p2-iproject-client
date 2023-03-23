@@ -1,11 +1,13 @@
+ 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
 
-import './style/index.css'
- 
+import './index.css' 
+import './style/font-face.css' 
+
 
 const app = createApp(App);
 
