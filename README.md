@@ -1,4 +1,3 @@
-
 The view of the app. Created similar to the layout, text, and colors of the original spotify app, also with dynamic colors based on the album colors of favorite artists
  
  
@@ -22,3 +21,4 @@ The view of the app. Created similar to the layout, text, and colors of the orig
 
 
 ![Home](https://cdn.discordapp.com/attachments/976641651772620807/1088659548820221982/image.png)
+ 
