@@ -23,3 +23,4 @@ The app's interface has been designed to closely resemble the layout, typography
 
 
 ![Home](https://cdn.discordapp.com/attachments/976641651772620807/1088659548820221982/image.png)
+ 
